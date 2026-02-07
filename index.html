@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStack Pro: Fleet Cargo Loader</title>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; overflow: hidden; 
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%); 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+        }
+        
+        /* Stats Panel */
+        #info {
+            position: absolute; top: 10px; left: 10px; color: white;
+            background: rgba(0,0,0,0.9); padding: 18px; border-radius: 12px;
+            width: 260px; border: 1px solid #e63946;
+            box-shadow: 0 0 20px rgba(230, 57, 70, 0.3);
+        }
+        #info h1 { margin: 0 0 12px 0; font-size: 1.1rem; color: #ff6b6b; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; }
+        .stat-val { font-weight: bold; color: #4dabf7; }
+        .legend { 
+            margin-top: 10px; padding-top: 8px; border-top: 1px solid #333; 
+            font-size: 0.7rem; color: #888; display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+        }
+        .legend span { display: flex; align-items: center; gap: 4px; }
+        
+        #view-report-btn {
+            margin-top: 12px; width: 100%; padding: 10px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            border: none; border-radius: 8px; color: white;
+            font-weight: bold; cursor: pointer; font-size: 0.85rem;
+            display: none;
+        }
+        #view-report-btn:hover { transform: scale(1.02); }
+        
+        /* Input Panel */
+        #input-panel {
+            position: absolute; top: 10px; right: 10px; color: white;
+            background: rgba(0,0,0,0.95); padding: 18px; border-radius: 12px;
+            width: 340px; border: 1px solid #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            max-height: 95vh; overflow-y: auto;
+        }
+        #input-panel h2 { margin: 0 0 12px 0; font-size: 1rem; color: #60a5fa; }
+        .section-title {
+            font-size: 0.75rem; color: #888; margin: 15px 0 8px 0;
+            text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid #333; padding-bottom: 5px;
+        }
+        
+        .truck-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .truck-option {
+            padding: 10px 8px; text-align: center;
+            background: #1a1a2e; border: 2px solid #333; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .truck-option:hover { border-color: #555; }
+        .truck-option.selected { border-color: #e63946; background: rgba(230, 57, 70, 0.15); }
+        .truck-option .icon { font-size: 1.4rem; }
+        .truck-option .name { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
+        .truck-option .dims { font-size: 0.6rem; color: #666; }
+        
+        .box-inputs { display: flex; flex-direction: column; gap: 8px; }
+        .box-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; background: #1a1a2e; border-radius: 8px;
+            border-left: 3px solid #666;
+        }
+        .box-row.electronics { border-color: #a855f7; }
+        .box-row.standard { border-color: #22c55e; }
+        .box-row.appliance { border-color: #3b82f6; }
+        .box-row.furniture { border-color: #f59e0b; }
+        .box-row.industrial { border-color: #ef4444; }
+        
+        .box-info { flex: 1; }
+        .box-info .name { font-size: 0.8rem; color: #ddd; }
+        .box-info .dims { font-size: 0.6rem; color: #666; }
+        .box-input-wrap { display: flex; flex-direction: column; align-items: center; }
+        .box-row input {
+            width: 55px; text-align: center; padding: 6px;
+            background: #0a0a1a; border: 1px solid #444; 
+            border-radius: 4px; color: white; font-size: 0.9rem;
+        }
+        .box-row input:focus { outline: none; border-color: #3b82f6; }
+        .max-label { font-size: 0.55rem; color: #555; margin-top: 2px; }
+        
+        .total-bar {
+            margin-top: 12px; padding: 10px;
+            background: rgba(59, 130, 246, 0.1); border-radius: 8px;
+            text-align: center; font-size: 0.85rem;
+        }
+        .total-bar strong { color: #4dabf7; }
+        .capacity-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.8rem; }
+        #est-usage { font-weight: bold; }
+        
+        #capacity-warning {
+            display: none; margin-top: 10px; padding: 8px;
+            background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444;
+            border-radius: 6px; font-size: 0.75rem; color: #fca5a5; text-align: center;
+        }
+        
+        /* Controls */
+        #controls {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); padding: 12px 25px; border-radius: 30px;
+            display: flex; gap: 12px; align-items: center; border: 1px solid #e63946;
+        }
+        button {
+            padding: 10px 25px; border: none; border-radius: 25px; cursor: pointer;
+            font-weight: bold; font-size: 0.9rem; transition: all 0.3s;
+        }
+        #btn-run { background: linear-gradient(135deg, #e63946, #ff6b6b); color: white; }
+        #btn-run:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(230, 57, 70, 0.5); }
+        #btn-reset { background: #333; color: white; border: 1px solid #555; }
+        #btn-reset:hover { background: #444; }
+        
+        #truck-label {
+            position: absolute; bottom: 75px; left: 50%; transform: translateX(-50%);
+            color: #ff6b6b; font-size: 1.2rem; font-weight: bold;
+            text-shadow: 0 0 15px rgba(230, 57, 70, 0.6); letter-spacing: 2px;
+        }
+        
+        /* Box Tooltip */
+        #box-tooltip {
+            position: absolute; display: none;
+            background: rgba(0,0,0,0.95); color: white;
+            padding: 12px 15px; border-radius: 10px;
+            border: 1px solid #4dabf7; font-size: 0.8rem;
+            pointer-events: none; z-index: 1000;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            min-width: 180px;
+        }
+        #box-tooltip h3 { margin: 0 0 8px 0; color: #4dabf7; font-size: 0.9rem; }
+        #box-tooltip .detail { margin: 4px 0; color: #ccc; }
+        #box-tooltip .detail span { color: #fff; font-weight: bold; }
+        
+        /* Report Modal */
+        #report-modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9); z-index: 2000;
+            justify-content: center; align-items: center;
+        }
+        #report-content {
+            background: #1a1a2e; border-radius: 15px; padding: 25px;
+            max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto;
+            border: 1px solid #3b82f6;
+        }
+        #report-content h2 { color: #4dabf7; margin: 0 0 20px 0; }
+        .report-header {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333;
+        }
+        .report-stat { background: #0a0a1a; padding: 12px; border-radius: 8px; }
+        .report-stat label { font-size: 0.75rem; color: #888; display: block; }
+        .report-stat value { font-size: 1.1rem; color: #4dabf7; font-weight: bold; }
+        
+        .report-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .report-table th { 
+            background: #0a0a1a; color: #4dabf7; padding: 10px; 
+            text-align: left; border-bottom: 2px solid #333;
+        }
+        .report-table td { padding: 8px 10px; border-bottom: 1px solid #222; color: #ccc; }
+        .report-table tr:hover { background: rgba(59, 130, 246, 0.1); }
+        .type-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.7rem; font-weight: bold;
+        }
+        .type-electronics { background: #a855f7; color: white; }
+        .type-standard { background: #22c55e; color: white; }
+        .type-appliance { background: #3b82f6; color: white; }
+        .type-furniture { background: #f59e0b; color: white; }
+        .type-industrial { background: #ef4444; color: white; }
+        
+        .report-actions {
+            margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;
+        }
+        .report-actions button { padding: 12px 25px; }
+        #download-pdf { background: linear-gradient(135deg, #22c55e, #4ade80); color: white; }
+        #close-report { background: #333; color: white; border: 1px solid #555; }
+        
+        .click-hint {
+            position: absolute; bottom: 115px; left: 50%; transform: translateX(-50%);
+            color: #666; font-size: 0.75rem; display: none;
+        }
+    </style>
+    
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script src="./web_models_js/priority_model.js"></script>
+    <script src="./web_models_js/stability_model.js"></script>
+</head>
+<body>
+    <!-- Stats Panel -->
+    <div id="info">
+        <h1>🚛 SMARTSTACK FLEET</h1>
+        <div class="stat-row"><span>Status:</span> <span id="status" class="stat-val">Ready</span></div>
+        <div class="stat-row"><span>Truck:</span> <span id="truck-name" class="stat-val">Medium</span></div>
+        <div class="stat-row"><span>Items Packed:</span> <span id="count" class="stat-val">0</span></div>
+        <div class="stat-row"><span>Stability:</span> <span id="stability" class="stat-val">100%</span></div>
+        <div class="stat-row"><span>Space Used:</span> <span id="utilization" class="stat-val">0%</span></div>
+        <div class="legend">
+            <span><span style="color:#a855f7">■</span> Electronics</span>
+            <span><span style="color:#22c55e">■</span> Standard</span>
+            <span><span style="color:#3b82f6">■</span> Appliance</span>
+            <span><span style="color:#f59e0b">■</span> Furniture</span>
+            <span><span style="color:#ef4444">■</span> Industrial</span>
+        </div>
+        <button id="view-report-btn">📋 View Cargo Report</button>
+    </div>
+
+    <!-- User Input Panel -->
+    <div id="input-panel">
+        <h2>📦 Shipment Configuration</h2>
+        
+        <div class="section-title">🚚 Select Truck Size</div>
+        <div class="truck-options">
+            <div class="truck-option" data-truck="small">
+                <div class="icon">🚐</div>
+                <div class="name">Small Van</div>
+                <div class="dims">60×50×40</div>
+            </div>
+            <div class="truck-option selected" data-truck="medium">
+                <div class="icon">🚛</div>
+                <div class="name">Medium Truck</div>
+                <div class="dims">100×70×55</div>
+            </div>
+            <div class="truck-option" data-truck="large">
+                <div class="icon">🚚</div>
+                <div class="name">Large Semi</div>
+                <div class="dims">140×85×65</div>
+            </div>
+            <div class="truck-option" data-truck="xl">
+                <div class="icon">🚛</div>
+                <div class="name">XL Container</div>
+                <div class="dims">180×100×80</div>
+            </div>
+        </div>
+        
+        <div class="section-title">📦 Package Quantities</div>
+        <div class="box-inputs">
+            <div class="box-row electronics">
+                <div class="box-info">
+                    <div class="name">📱 Electronics</div>
+                    <div class="dims">Fragile • 15×12×10 • 2-8kg</div>
+                </div>
+                <div class="box-input-wrap">
+                    <input type="number" id="num-electronics" value="5" min="0">
+                    <span class="max-label">max: <span id="max-electronics">50</span></span>
+                </div>
+            </div>
+            <div class="box-row standard">
+                <div class="box-info">
+                    <div class="name">📦 Standard Parcel</div>
+                    <div class="dims">Medium • 25×20×15 • 5-20kg</div>
+                </div>
+                <div class="box-input-wrap">
+                    <input type="number" id="num-standard" value="8" min="0">
+                    <span class="max-label">max: <span id="max-standard">30</span></span>
+                </div>
+            </div>
+            <div class="box-row appliance">
+                <div class="box-info">
+                    <div class="name">🔲 Appliance</div>
+                    <div class="dims">Large • 40×35×45 • 15-40kg</div>
+                </div>
+                <div class="box-input-wrap">
+                    <input type="number" id="num-appliance" value="2" min="0">
+                    <span class="max-label">max: <span id="max-appliance">10</span></span>
+                </div>
+            </div>
+            <div class="box-row furniture">
+                <div class="box-info">
+                    <div class="name">🪑 Furniture</div>
+                    <div class="dims">XL/Long • 55×25×18 • 10-30kg</div>
+                </div>
+                <div class="box-input-wrap">
+                    <input type="number" id="num-furniture" value="1" min="0">
+                    <span class="max-label">max: <span id="max-furniture">8</span></span>
+                </div>
+            </div>
+            <div class="box-row industrial">
+                <div class="box-info">
+                    <div class="name">⚙️ Industrial</div>
+                    <div class="dims">Heavy • 30×30×25 • 50-100kg</div>
+                </div>
+                <div class="box-input-wrap">
+                    <input type="number" id="num-industrial" value="2" min="0">
+                    <span class="max-label">max: <span id="max-industrial">15</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="total-bar">
+            Total: <strong><span id="total-items">18</span></strong> packages
+            <div class="capacity-row">
+                <span>Est. Capacity:</span>
+                <span id="est-usage" style="color: #22c55e;">45%</span>
+            </div>
+        </div>
+        <div id="capacity-warning"></div>
+    </div>
+
+    <!-- Box Tooltip -->
+    <div id="box-tooltip">
+        <h3 id="tooltip-title">📦 Product Details</h3>
+        <div class="detail">Type: <span id="tooltip-type">-</span></div>
+        <div class="detail">ID: <span id="tooltip-id">-</span></div>
+        <div class="detail">Dimensions: <span id="tooltip-dims">-</span></div>
+        <div class="detail">Weight: <span id="tooltip-weight">-</span></div>
+        <div class="detail">Position: <span id="tooltip-pos">-</span></div>
+        <div class="detail">Stability: <span id="tooltip-stability">-</span></div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal">
+        <div id="report-content">
+            <h2>📋 Cargo Packing Report</h2>
+            <div class="report-header">
+                <div class="report-stat">
+                    <label>Truck Type</label>
+                    <value id="report-truck">-</value>
+                </div>
+                <div class="report-stat">
+                    <label>Total Items</label>
+                    <value id="report-total">-</value>
+                </div>
+                <div class="report-stat">
+                    <label>Space Utilization</label>
+                    <value id="report-util">-</value>
+                </div>
+                <div class="report-stat">
+                    <label>Report Date</label>
+                    <value id="report-date">-</value>
+                </div>
+            </div>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Dimensions (L×W×H)</th>
+                        <th>Weight</th>
+                        <th>Position (X,Y,Z)</th>
+                        <th>Stability</th>
+                    </tr>
+                </thead>
+                <tbody id="report-table-body"></tbody>
+            </table>
+            <div class="report-actions">
+                <button id="download-pdf">📥 Download PDF Report</button>
+                <button id="close-report">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="truck-label">SMARTSTACK FLEET</div>
+    <div class="click-hint" id="click-hint">💡 Click on any box to see details</div>
+
+    <div id="controls">
+        <button id="btn-run">🚀 LOAD CARGO</button>
+        <button id="btn-reset">↺ Clear</button>
+    </div>
+
+    <script type="module" src="./simulation.js"></script>
+</body>
+</html>

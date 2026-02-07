@@ -1,0 +1,114 @@
+.new-project-page {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 50%, #050510 100%);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #888;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #aaa;
+  transform: translateX(-2px);
+}
+
+.project-name-input {
+  flex: 1;
+}
+
+.project-name-input input {
+  width: 100%;
+  max-width: 400px;
+  padding: 14px 20px;
+  background: rgba(10, 10, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-name-input input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.project-name-input input::placeholder {
+  color: #444;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
+  animation: fadeInScale 0.4s ease-out;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(34, 197, 94, 0.35);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.simulation-container {
+  position: relative;
+  height: calc(100vh - 75px);
+  animation: fadeIn 0.6s ease-out 0.2s backwards;
+}
+
+.click-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  color: #888;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.5s ease-out, pulse 2s ease-in-out infinite 1s;
+  z-index: 50;
+}
+
+.click-hint svg {
+  color: #60a5fa;
+}

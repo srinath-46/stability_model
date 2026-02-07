@@ -1,0 +1,14 @@
+# Python dependencies for ML-Assisted Stability Predictor
+# Install with: pip install -r requirements.txt
+
+# Core TensorFlow for training
+tensorflow>=2.15.0
+
+# TensorFlow.js converter for export
+tensorflowjs>=4.17.0
+
+# Data handling
+numpy>=1.24.0
+
+# Progress bars for data generation
+tqdm>=4.65.0

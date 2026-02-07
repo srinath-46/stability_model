@@ -1,0 +1,175 @@
+.report-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.report-content {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(10, 10, 26, 0.98));
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 900px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 60px rgba(59, 130, 246, 0.15),
+    0 30px 60px rgba(0, 0, 0, 0.5);
+  animation: fadeInScale 0.4s ease-out;
+}
+
+.report-content h2 {
+  color: #fff;
+  margin: 0 0 28px 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-content h2 svg {
+  color: #60a5fa;
+}
+
+.report-header {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-stat {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s;
+}
+
+.report-stat:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.report-stat label {
+  font-size: 0.75rem;
+  color: #666;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.report-stat .value {
+  font-size: 1.2rem;
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.report-table th {
+  background: rgba(0, 0, 0, 0.5);
+  color: #60a5fa;
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.report-table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.report-table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.report-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #aaa;
+  transition: all 0.3s;
+}
+
+.report-table tr:hover td {
+  background: rgba(59, 130, 246, 0.05);
+  color: #ccc;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.type-electronics { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+.type-standard { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+.type-appliance { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+.type-furniture { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.type-industrial { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+.report-actions {
+  margin-top: 28px;
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+}
+
+.download-pdf {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
+}
+
+.download-pdf:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(34, 197, 94, 0.35);
+}
+
+.close-report {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #888;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.close-report:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #aaa;
+}

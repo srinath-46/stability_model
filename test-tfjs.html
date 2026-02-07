@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML-Assisted Stability Predictor (TF.js Hybrid) - Test</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+      color: #eee; 
+      padding: 20px; 
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { 
+      color: #e94560; 
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .version {
+      text-align: center;
+      color: #0f3460;
+      background: #e94560;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .status-bar {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .status-dot.green { background: #4ade80; }
+    .status-dot.red { background: #ef4444; }
+    .status-dot.yellow { background: #facc15; }
+    pre { 
+      background: #0f3460; 
+      padding: 15px; 
+      border-radius: 8px; 
+      overflow-x: auto; 
+      font-size: 13px;
+      line-height: 1.5;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #e94560;
+    }
+    .spinner {
+      border: 3px solid #0f3460;
+      border-top: 3px solid #e94560;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .note {
+      background: rgba(233, 69, 96, 0.2);
+      border-left: 4px solid #e94560;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      border-radius: 0 8px 8px 0;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .info-card {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .info-card h3 {
+      color: #e94560;
+      margin: 0 0 10px 0;
+      font-size: 14px;
+    }
+    .info-card p {
+      margin: 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 ML-Assisted Stability Predictor</h1>
+    <div style="text-align: center;">
+      <span class="version">v2.0.0-tfjs (TensorFlow.js Hybrid)</span>
+    </div>
+    
+    <div class="status-bar" id="statusBar">
+      <div class="status-item">
+        <span class="status-dot yellow" id="tfjsStatus"></span>
+        <span>TensorFlow.js: <span id="tfjsText">Checking...</span></span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot yellow" id="modelStatus"></span>
+        <span>Model: <span id="modelText">Not loaded</span></span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot yellow" id="modeStatus"></span>
+        <span>Mode: <span id="modeText">Initializing...</span></span>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Feature Vector Size</h3>
+        <p id="featureSize">30</p>
+      </div>
+      <div class="info-card">
+        <h3>MLP Architecture</h3>
+        <p style="font-size: 14px;">128 → 64 → 32 → 1</p>
+      </div>
+      <div class="info-card">
+        <h3>Inference Time</h3>
+        <p id="inferenceTime">-- ms</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Note:</strong> Without a trained model file (tfjs_model/model.json), the system 
+      automatically falls back to physics-based calculations. Both modes produce valid stability scores.
+      <br><br>
+      <strong>To train the model:</strong>
+      <code style="display: block; margin-top: 8px; background: #0f3460; padding: 8px; border-radius: 4px;">
+        pip install tensorflow tensorflowjs numpy tqdm<br>
+        python generate_data.py<br>
+        python train_and_export.py
+      </code>
+    </div>
+    
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <div>Running stability predictions...</div>
+    </div>
+    
+    <pre id="output" style="display: none;"></pre>
+  </div>
+
+  <!-- TensorFlow.js CDN v4.22.0 -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  
+  <script type="module">
+    import { demo, getModelStatus, FEATURE_VECTOR_SIZE, mlAssistedStabilityPredictor } from './mlAssistedStabilityPredictor-tfjs.js';
+    
+    const output = document.getElementById('output');
+    const loading = document.getElementById('loading');
+    const tfjsStatus = document.getElementById('tfjsStatus');
+    const tfjsText = document.getElementById('tfjsText');
+    const modelStatus = document.getElementById('modelStatus');
+    const modelText = document.getElementById('modelText');
+    const modeStatus = document.getElementById('modeStatus');
+    const modeText = document.getElementById('modeText');
+    const featureSize = document.getElementById('featureSize');
+    const inferenceTime = document.getElementById('inferenceTime');
+    
+    // Update TF.js status
+    if (typeof tf !== 'undefined') {
+      tfjsStatus.className = 'status-dot green';
+      tfjsText.textContent = `Available (v${tf.version.tfjs})`;
+    } else {
+      tfjsStatus.className = 'status-dot red';
+      tfjsText.textContent = 'Not loaded';
+    }
+    
+    // Update feature size
+    featureSize.textContent = FEATURE_VECTOR_SIZE || 30;
+    
+    // Capture console output
+    const logs = [];
+    const originalLog = console.log;
+    console.log = (...args) => {
+      logs.push(args.map(a => {
+        if (typeof a === 'object') {
+          try {
+            return JSON.stringify(a, null, 2);
+          } catch {
+            return String(a);
+          }
+        }
+        return String(a);
+      }).join(' '));
+      originalLog.apply(console, args);
+    };
+    
+    // Measure inference time
+    async function measureInferenceTime() {
+      const testItems = [
+        { id: '1', position: { x: 20, y: 0, z: 20 }, dimensions: { width: 60, height: 30, depth: 60 }, weight: 10 },
+        { id: '2', position: { x: 25, y: 30, z: 25 }, dimensions: { width: 50, height: 20, depth: 50 }, weight: 5 }
+      ];
+      
+      const start = performance.now();
+      await mlAssistedStabilityPredictor(testItems);
+      const end = performance.now();
+      
+      return (end - start).toFixed(2);
+    }
+    
+    // Run demo
+    try {
+      const results = await demo();
+      
+      // Measure inference time
+      const time = await measureInferenceTime();
+      inferenceTime.textContent = `${time} ms`;
+      
+      // Update model status
+      const status = getModelStatus();
+      if (status.loaded) {
+        modelStatus.className = 'status-dot green';
+        modelText.textContent = 'Loaded';
+        modeStatus.className = 'status-dot green';
+        modeText.textContent = 'TF.js Neural Network';
+      } else {
+        modelStatus.className = 'status-dot yellow';
+        modelText.textContent = status.error ? 'Load failed' : 'Not available';
+        modeStatus.className = 'status-dot green';
+        modeText.textContent = 'Physics Fallback';
+      }
+      
+      loading.style.display = 'none';
+      output.style.display = 'block';
+      output.textContent = logs.join('\n');
+    } catch (e) {
+      loading.style.display = 'none';
+      output.style.display = 'block';
+      output.textContent = 'Error: ' + e.message + '\n\n' + logs.join('\n');
+      
+      modelStatus.className = 'status-dot red';
+      modelText.textContent = 'Error';
+      modeStatus.className = 'status-dot red';
+      modeText.textContent = 'Failed';
+    }
+  </script>
+</body>
+</html>
