@@ -17,7 +17,7 @@ export default function NewProject() {
   const { user } = useAuth();
   const { addProject } = useProjects();
   const navigate = useNavigate();
-  
+
   const [projectName, setProjectName] = useState('');
   const [truckKey, setTruckKey] = useState('medium');
   const [boxCounts, setBoxCounts] = useState({
@@ -27,7 +27,7 @@ export default function NewProject() {
     furniture: 1,
     industrial: 2
   });
-  
+
   const [status, setStatus] = useState('Ready');
   const [packedItems, setPackedItems] = useState([]);
   const [utilization, setUtilization] = useState(0);
@@ -35,13 +35,24 @@ export default function NewProject() {
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [selectedBox, setSelectedBox] = useState(null);
   const [tooltipPos, setTooltipPos] = useState(null);
   const [showReport, setShowReport] = useState(false);
 
   const truck = TRUCKS[truckKey];
   const containerVolume = truck.w * truck.h * truck.d;
+
+  const handleTruckChange = (key) => {
+    // Reset everything when switching trucks so old packed items don't persist
+    setPackedItems([]);
+    setStatus('Ready');
+    setUtilization(0);
+    setStability(100);
+    setIsComplete(false);
+    setSelectedBox(null);
+    setTruckKey(key);
+  };
 
   const handleBoxCountChange = (type, count) => {
     setBoxCounts(prev => ({ ...prev, [type]: count }));
@@ -52,41 +63,41 @@ export default function NewProject() {
       alert('Please enter a project name');
       return;
     }
-    
+
     setIsRunning(true);
     setIsComplete(false);
     setPackedItems([]);
     setStatus('AI: Generating items...');
-    
+
     const items = generateItems(boxCounts);
-    
+
     if (items.length === 0) {
       setStatus('No items!');
       setIsRunning(false);
       return;
     }
-    
+
     setStatus('AI: Optimizing...');
-    
+
     const packer = new GuaranteedPacker(truck.w, truck.h, truck.d);
-    
+
     const onItemPacked = (item, count, usedVol) => {
       setPackedItems(prev => [...prev, item]);
       setStability(Math.round(item.stability * 100));
       setUtilization((usedVol / containerVolume) * 100);
     };
-    
+
     const packed = await packer.pack(items, onItemPacked);
-    
+
     const finalUtil = (packer.usedVolume / containerVolume) * 100;
     setUtilization(finalUtil);
-    
+
     if (packed.length === items.length) {
       setStatus(`All ${packed.length} boxes loaded!`);
     } else {
       setStatus(`${packed.length}/${items.length} loaded`);
     }
-    
+
     setIsRunning(false);
     setIsComplete(true);
   };
@@ -107,7 +118,7 @@ export default function NewProject() {
 
   const handleSubmitPlan = async () => {
     setIsSubmitting(true);
-    
+
     const project = {
       name: projectName,
       driverUid: user.uid,
@@ -120,9 +131,9 @@ export default function NewProject() {
       utilization,
       stability
     };
-    
+
     const result = await addProject(project);
-    
+
     if (result.success) {
       navigate('/driver/dashboard');
     } else {
@@ -152,14 +163,14 @@ export default function NewProject() {
           </button>
         )}
       </header>
-      
+
       <div className="simulation-container">
-        <TruckViewer 
-          truckKey={truckKey} 
+        <TruckViewer
+          truckKey={truckKey}
           packedItems={packedItems}
           onBoxClick={handleBoxClick}
         />
-        
+
         <StatsPanel
           status={status}
           truckName={truck.name}
@@ -169,19 +180,19 @@ export default function NewProject() {
           onViewReport={() => setShowReport(true)}
           showReportButton={isComplete}
         />
-        
+
         <InputPanel
           truckKey={truckKey}
-          onTruckChange={setTruckKey}
+          onTruckChange={handleTruckChange}
           boxCounts={boxCounts}
           onBoxCountChange={handleBoxCountChange}
           onLoadCargo={handleLoadCargo}
           onReset={handleReset}
           disabled={isRunning}
         />
-        
+
         <BoxTooltip item={selectedBox} position={tooltipPos} />
-        
+
         <ReportModal
           isOpen={showReport}
           onClose={() => setShowReport(false)}
@@ -190,7 +201,7 @@ export default function NewProject() {
           utilization={utilization}
         />
       </div>
-      
+
       {isComplete && (
         <div className="click-hint"><MousePointer size={14} /> Click on any box to see details</div>
       )}
