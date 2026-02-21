@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
 import { useEffect, useState, useMemo } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock } from 'lucide-react';
+import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit } from 'lucide-react';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
@@ -70,10 +70,24 @@ export default function AdminDashboard() {
       status: 'assigned',
       assignedAt: new Date().toISOString()
     });
+    if (result.success) loadProjects();
+  };
 
-    if (result.success) {
-      loadProjects();
-    }
+  const handleApproveCancel = async (projectId) => {
+    const result = await updateProject(projectId, {
+      status: 'cancelled',
+      cancelledAt: new Date().toISOString()
+    });
+    if (result.success) loadProjects();
+  };
+
+  const handleRejectCancel = async (projectId) => {
+    const result = await updateProject(projectId, {
+      status: 'assigned',
+      cancelReason: null,
+      cancelRequestedAt: null
+    });
+    if (result.success) loadProjects();
   };
 
   // Computed stats
@@ -194,6 +208,12 @@ export default function AdminDashboard() {
               <button className={`filter-btn ${statusFilter === 'assigned' ? 'active' : ''}`} onClick={() => setStatusFilter('assigned')}>
                 <CheckCircle size={14} /> Assigned
               </button>
+              <button className={`filter-btn ${statusFilter === 'cancel_requested' ? 'active' : ''}`} onClick={() => setStatusFilter('cancel_requested')}>
+                <AlertTriangle size={14} /> Cancel Req.
+              </button>
+              <button className={`filter-btn ${statusFilter === 'cancelled' ? 'active' : ''}`} onClick={() => setStatusFilter('cancelled')}>
+                <XCircle size={14} /> Cancelled
+              </button>
             </div>
           </div>
         )}
@@ -251,7 +271,7 @@ export default function AdminDashboard() {
                     </td>
                     <td>
                       <span className={`status-badge ${project.status}`}>
-                        {project.status === 'assigned' ? 'Assigned' : 'Submitted'}
+                        {project.status === 'cancel_requested' ? 'Cancel Req.' : project.status === 'cancelled' ? 'Cancelled' : project.status === 'assigned' ? 'Assigned' : 'Submitted'}
                       </span>
                     </td>
                     <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
@@ -261,12 +281,36 @@ export default function AdminDashboard() {
                       >
                         <Eye size={14} /> View
                       </button>
-                      {project.status !== 'assigned' && (
+                      {project.status === 'submitted' && (
                         <button
                           className="assign-btn"
                           onClick={() => handleAssignDriver(project.id)}
                         >
                           <CheckCircle size={14} /> Assign
+                        </button>
+                      )}
+                      {project.status === 'cancel_requested' && (
+                        <>
+                          <button
+                            className="assign-btn"
+                            onClick={() => handleApproveCancel(project.id)}
+                          >
+                            <CheckCircle size={14} /> Approve
+                          </button>
+                          <button
+                            className="reject-btn"
+                            onClick={() => handleRejectCancel(project.id)}
+                          >
+                            <XCircle size={14} /> Reject
+                          </button>
+                        </>
+                      )}
+                      {project.status === 'cancelled' && (
+                        <button
+                          className="modify-btn"
+                          onClick={() => navigate(`/admin/modify/${project.id}`)}
+                        >
+                          <Edit size={14} /> Modify
                         </button>
                       )}
                     </td>

@@ -21,7 +21,9 @@
   max-width: 900px;
   width: 95%;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border-accent);
   box-shadow:
     0 0 60px var(--shadow-glow),
@@ -78,6 +80,12 @@
   font-size: 1.2rem;
   color: var(--text-value);
   font-weight: 700;
+}
+
+.report-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .report-table {

@@ -114,7 +114,7 @@ export default function NewProject() {
   };
 
   const handleBoxClick = (item, event) => {
-    if (selectedBox && selectedBox.index === item.index) {
+    if (selectedBox && selectedBox.id === item.id && selectedBox.x === item.x && selectedBox.y === item.y && selectedBox.z === item.z) {
       setSelectedBox(null);
       setTooltipPos(null);
     } else {

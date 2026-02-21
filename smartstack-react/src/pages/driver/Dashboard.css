@@ -320,6 +320,18 @@
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
+.status-badge.cancel_requested {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.cancelled {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
 /* Projects grid */
 .projects-grid {
   display: grid;

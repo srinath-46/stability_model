@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
 import { useEffect, useState, useMemo } from 'react';
-import { Truck, Package, Plus, User, LogOut, Calendar, BarChart3, Inbox, Loader, Sun, Moon, Search, Filter, TrendingUp, Activity, Box } from 'lucide-react';
+import { Truck, Package, Plus, User, LogOut, Calendar, BarChart3, Inbox, Loader, Sun, Moon, Search, Filter, TrendingUp, Activity, Box, XCircle, AlertTriangle } from 'lucide-react';
 import './Dashboard.css';
 
 export default function DriverDashboard() {
@@ -139,6 +139,12 @@ export default function DriverDashboard() {
               <button className={`filter-btn ${statusFilter === 'assigned' ? 'active' : ''}`} onClick={() => setStatusFilter('assigned')}>
                 <TrendingUp size={14} /> Assigned
               </button>
+              <button className={`filter-btn ${statusFilter === 'cancel_requested' ? 'active' : ''}`} onClick={() => setStatusFilter('cancel_requested')}>
+                <AlertTriangle size={14} /> Pending Cancel
+              </button>
+              <button className={`filter-btn ${statusFilter === 'cancelled' ? 'active' : ''}`} onClick={() => setStatusFilter('cancelled')}>
+                <XCircle size={14} /> Cancelled
+              </button>
             </div>
           </div>
         )}
@@ -164,7 +170,9 @@ export default function DriverDashboard() {
               <div key={project.id} className="project-card" onClick={() => navigate(`/driver/project/${project.id}`)}>
                 <div className="project-header">
                   <h3>{project.name}</h3>
-                  <span className={`status-badge ${project.status}`}>{project.status}</span>
+                  <span className={`status-badge ${project.status}`}>
+                    {project.status === 'cancel_requested' ? 'Cancel Pending' : project.status === 'cancelled' ? 'Cancelled' : project.status}
+                  </span>
                 </div>
                 <div className="project-meta">
                   <div className="meta-row">

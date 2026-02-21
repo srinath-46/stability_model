@@ -1,0 +1,47 @@
+/* Specific styles for ModifyPlan view */
+
+.modify-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modify-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+
+.modify-driver-tag {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Adjust project-name-input when modifying */
+.new-project-page .project-header .project-name-input {
+    max-width: 300px;
+}
+
+/* Modification banner colors similar to cancel banners but blue */
+.modify-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.04));
+    border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--accent-blue-light);
+    font-weight: 600;
+    font-size: 0.9rem;
+    animation: fadeInDown 0.4s ease-out;
+}
