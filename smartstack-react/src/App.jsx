@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 
 // Pages
 import Login from './pages/Login';
@@ -13,25 +14,25 @@ import PlanView from './pages/admin/PlanView';
 // Protected Route component
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading-screen">Loading...</div>;
   }
-  
+
   if (!user) {
     return <Navigate to="/" replace />;
   }
-  
+
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 }
 
 function AppRoutes() {
   const { user } = useAuth();
-  
+
   return (
     <Routes>
       {/* Public */}
@@ -42,7 +43,7 @@ function AppRoutes() {
           <Login />
         )
       } />
-      
+
       {/* Driver routes */}
       <Route path="/driver/dashboard" element={
         <ProtectedRoute allowedRoles={['driver']}>
@@ -59,7 +60,7 @@ function AppRoutes() {
           <ProjectView />
         </ProtectedRoute>
       } />
-      
+
       {/* Admin routes */}
       <Route path="/admin/dashboard" element={
         <ProtectedRoute allowedRoles={['admin']}>
@@ -71,7 +72,7 @@ function AppRoutes() {
           <PlanView />
         </ProtectedRoute>
       } />
-      
+
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -82,9 +83,11 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   );

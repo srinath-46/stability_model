@@ -5,6 +5,7 @@ import { useProjects } from '../../hooks/useProjects';
 import { TRUCKS } from '../../data/trucks';
 import { generateItems } from '../../data/boxTypes';
 import { GuaranteedPacker } from '../../hooks/usePacker';
+import { useToast } from '../../context/ToastContext';
 import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import InputPanel from '../../components/InputPanel';
@@ -17,6 +18,7 @@ export default function NewProject() {
   const { user } = useAuth();
   const { addProject } = useProjects();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [projectName, setProjectName] = useState('');
   const [truckKey, setTruckKey] = useState('medium');
@@ -60,7 +62,7 @@ export default function NewProject() {
 
   const handleLoadCargo = async () => {
     if (!projectName.trim()) {
-      alert('Please enter a project name');
+      toast.error('Please enter a project name');
       return;
     }
 
@@ -112,8 +114,13 @@ export default function NewProject() {
   };
 
   const handleBoxClick = (item, event) => {
-    setSelectedBox(item);
-    setTooltipPos({ x: event.clientX || 0, y: event.clientY || 0 });
+    if (selectedBox && selectedBox.index === item.index) {
+      setSelectedBox(null);
+      setTooltipPos(null);
+    } else {
+      setSelectedBox(item);
+      setTooltipPos({ x: event.clientX || 0, y: event.clientY || 0 });
+    }
   };
 
   const handleSubmitPlan = async () => {
@@ -137,7 +144,7 @@ export default function NewProject() {
     if (result.success) {
       navigate('/driver/dashboard');
     } else {
-      alert('Error saving project: ' + result.error);
+      toast.error('Error saving project: ' + result.error);
       setIsSubmitting(false);
     }
   };

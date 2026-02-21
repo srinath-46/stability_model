@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
-import { useEffect, useState } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
+import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock } from 'lucide-react';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
@@ -11,7 +11,7 @@ export default function AdminDashboard() {
   const { theme, toggleTheme } = useTheme();
   const { getAllProjects, updateProject } = useProjects();
   const navigate = useNavigate();
-  
+
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddDriver, setShowAddDriver] = useState(false);
@@ -19,6 +19,8 @@ export default function AdminDashboard() {
   const [addingDriver, setAddingDriver] = useState(false);
   const [addError, setAddError] = useState('');
   const [addSuccess, setAddSuccess] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const loadProjects = async () => {
     const data = await getAllProjects();
@@ -48,7 +50,7 @@ export default function AdminDashboard() {
     }
 
     const result = await register(newDriver.email, newDriver.password, newDriver.name, 'driver');
-    
+
     if (result.success) {
       setAddSuccess(`Driver "${newDriver.name}" added successfully!`);
       setNewDriver({ name: '', email: '', password: '' });
@@ -59,22 +61,44 @@ export default function AdminDashboard() {
     } else {
       setAddError(result.error);
     }
-    
+
     setAddingDriver(false);
   };
 
   const handleAssignDriver = async (projectId) => {
-    // Update project status to 'assigned'
-    const result = await updateProject(projectId, { 
+    const result = await updateProject(projectId, {
       status: 'assigned',
       assignedAt: new Date().toISOString()
     });
-    
+
     if (result.success) {
-      // Reload projects to show updated status
       loadProjects();
     }
   };
+
+  // Computed stats
+  const stats = useMemo(() => {
+    if (projects.length === 0) return null;
+    const avgUtil = projects.reduce((acc, p) => acc + (p.utilization || 0), 0) / projects.length;
+    const pending = projects.filter(p => p.status !== 'assigned').length;
+    const uniqueDrivers = new Set(projects.map(p => p.driverName)).size;
+    return {
+      totalPlans: projects.length,
+      avgUtilization: avgUtil.toFixed(1),
+      pendingReview: pending,
+      totalDrivers: uniqueDrivers
+    };
+  }, [projects]);
+
+  // Filtered projects
+  const filteredProjects = useMemo(() => {
+    return projects.filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [projects, searchQuery, statusFilter]);
 
   if (loading) {
     return (
@@ -106,18 +130,85 @@ export default function AdminDashboard() {
           </button>
         </div>
       </header>
-      
+
       <main className="dashboard-main">
         <div className="dashboard-title">
           <h2><BarChart3 size={22} /> All Submitted Plans</h2>
           <span className="total-count">{projects.length} total</span>
         </div>
-        
+
+        {/* Admin Stats Summary */}
+        {stats && (
+          <div className="stats-summary admin-stats">
+            <div className="summary-card">
+              <div className="summary-icon"><ClipboardList size={20} /></div>
+              <div className="summary-data">
+                <span className="summary-value">{stats.totalPlans}</span>
+                <span className="summary-label">Total Plans</span>
+              </div>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon"><TrendingUp size={20} /></div>
+              <div className="summary-data">
+                <span className="summary-value">{stats.avgUtilization}%</span>
+                <span className="summary-label">Avg Utilization</span>
+              </div>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon"><Clock size={20} /></div>
+              <div className="summary-data">
+                <span className="summary-value">{stats.pendingReview}</span>
+                <span className="summary-label">Pending Review</span>
+              </div>
+            </div>
+            <div className="summary-card">
+              <div className="summary-icon"><User size={20} /></div>
+              <div className="summary-data">
+                <span className="summary-value">{stats.totalDrivers}</span>
+                <span className="summary-label">Drivers</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Search & Filter */}
+        {projects.length > 0 && (
+          <div className="search-filter-bar">
+            <div className="search-input-wrapper">
+              <Search size={16} />
+              <input
+                type="text"
+                placeholder="Search by project or driver..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="filter-buttons">
+              <button className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>
+                <Filter size={14} /> All
+              </button>
+              <button className={`filter-btn ${statusFilter === 'submitted' ? 'active' : ''}`} onClick={() => setStatusFilter('submitted')}>
+                <Activity size={14} /> Submitted
+              </button>
+              <button className={`filter-btn ${statusFilter === 'assigned' ? 'active' : ''}`} onClick={() => setStatusFilter('assigned')}>
+                <CheckCircle size={14} /> Assigned
+              </button>
+            </div>
+          </div>
+        )}
+
         {projects.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon"><Inbox size={64} /></div>
             <h3>No plans submitted yet</h3>
             <p>Drivers will submit their cargo plans here once created.</p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon"><Search size={48} /></div>
+            <h3>No matches found</h3>
+            <p>Try a different search term or filter.</p>
           </div>
         ) : (
           <div className="admin-table-container">
@@ -134,31 +225,44 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {projects.map(project => (
-                  <tr key={project.id}>
+                {filteredProjects.map(project => (
+                  <tr key={project.id} className="clickable-row" onClick={() => navigate(`/admin/plan/${project.id}`)}>
                     <td className="project-name">{project.name}</td>
-                    <td>{project.driverName}</td>
+                    <td>
+                      <span className="driver-name-cell">
+                        <span className="driver-avatar">{project.driverName?.charAt(0).toUpperCase()}</span>
+                        {project.driverName}
+                      </span>
+                    </td>
                     <td><Truck size={14} /> {project.truckName}</td>
                     <td><Package size={14} /> {project.itemCount}</td>
                     <td>
-                      <span className="utilization-badge">
-                        {project.utilization?.toFixed(1)}%
-                      </span>
+                      <div className="table-util-cell">
+                        <span className="utilization-badge">
+                          {project.utilization?.toFixed(1)}%
+                        </span>
+                        <div className="utilization-bar-container table-bar">
+                          <div
+                            className="utilization-bar-fill"
+                            style={{ width: `${Math.min(project.utilization || 0, 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     </td>
                     <td>
                       <span className={`status-badge ${project.status}`}>
                         {project.status === 'assigned' ? 'Assigned' : 'Submitted'}
                       </span>
                     </td>
-                    <td className="actions-cell">
-                      <button 
+                    <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
+                      <button
                         className="view-btn"
                         onClick={() => navigate(`/admin/plan/${project.id}`)}
                       >
                         <Eye size={14} /> View
                       </button>
                       {project.status !== 'assigned' && (
-                        <button 
+                        <button
                           className="assign-btn"
                           onClick={() => handleAssignDriver(project.id)}
                         >
@@ -184,7 +288,7 @@ export default function AdminDashboard() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={handleAddDriver} className="add-driver-form">
               <div className="form-group">
                 <label>Full Name</label>
@@ -196,7 +300,7 @@ export default function AdminDashboard() {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Email</label>
                 <input
@@ -207,7 +311,7 @@ export default function AdminDashboard() {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Password</label>
                 <input
@@ -219,10 +323,10 @@ export default function AdminDashboard() {
                   minLength={6}
                 />
               </div>
-              
+
               {addError && <div className="error-msg">{addError}</div>}
               {addSuccess && <div className="success-msg">{addSuccess}</div>}
-              
+
               <button type="submit" className="submit-driver-btn" disabled={addingDriver}>
                 {addingDriver ? 'Adding...' : <><UserPlus size={16} /> Add Driver</>}
               </button>
