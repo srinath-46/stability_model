@@ -121,9 +121,6 @@ export default function AdminDashboard() {
           <span className="admin-badge">ADMIN</span>
         </div>
         <div className="header-right">
-          <button className="manage-drivers-link-btn" onClick={() => navigate('/admin/drivers')}>
-            <Users size={16} /> Manage Drivers
-          </button>
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
