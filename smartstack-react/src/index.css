@@ -10,6 +10,7 @@
 @import './pages/driver/Dashboard.css';
 @import './pages/admin/Dashboard.css';
 @import './pages/admin/ModifyPlan.css';
+@import './pages/admin/ManageDrivers.css';
 
 /* ===== Theme Variables ===== */
 :root {
