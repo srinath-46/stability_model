@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: var(--bg-overlay);
   backdrop-filter: blur(10px);
   z-index: 2000;
   display: flex;
@@ -14,7 +14,7 @@
 }
 
 .report-content {
-  background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(10, 10, 26, 0.98));
+  background: var(--bg-modal);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 32px;
@@ -22,15 +22,15 @@
   width: 95%;
   max-height: 90vh;
   overflow-y: auto;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 0 60px rgba(59, 130, 246, 0.15),
-    0 30px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-accent);
+  box-shadow:
+    0 0 60px var(--shadow-glow),
+    0 30px 60px var(--shadow-dark);
   animation: fadeInScale 0.4s ease-out;
 }
 
 .report-content h2 {
-  color: #fff;
+  color: var(--text-heading);
   margin: 0 0 28px 0;
   font-size: 1.4rem;
   font-weight: 700;
@@ -40,7 +40,7 @@
 }
 
 .report-content h2 svg {
-  color: #60a5fa;
+  color: var(--text-value);
 }
 
 .report-header {
@@ -49,25 +49,25 @@
   gap: 16px;
   margin-bottom: 28px;
   padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .report-stat {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--bg-card);
   padding: 18px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
   transition: all 0.3s;
 }
 
 .report-stat:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: var(--border-accent);
   transform: translateY(-2px);
 }
 
 .report-stat label {
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-muted);
   display: block;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -76,7 +76,7 @@
 
 .report-stat .value {
   font-size: 1.2rem;
-  color: #60a5fa;
+  color: var(--text-value);
   font-weight: 700;
 }
 
@@ -87,8 +87,8 @@
 }
 
 .report-table th {
-  background: rgba(0, 0, 0, 0.5);
-  color: #60a5fa;
+  background: var(--bg-table-header);
+  color: var(--text-value);
   padding: 14px 12px;
   text-align: left;
   font-size: 0.75rem;
@@ -107,14 +107,14 @@
 
 .report-table td {
   padding: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #aaa;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   transition: all 0.3s;
 }
 
 .report-table tr:hover td {
   background: rgba(59, 130, 246, 0.05);
-  color: #ccc;
+  color: var(--text-primary);
 }
 
 .type-badge {
@@ -127,11 +127,30 @@
   letter-spacing: 0.5px;
 }
 
-.type-electronics { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-.type-standard { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-.type-appliance { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-.type-furniture { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-.type-industrial { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.type-electronics {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+}
+
+.type-standard {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.type-appliance {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.type-furniture {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.type-industrial {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
 
 .report-actions {
   margin-top: 28px;
@@ -159,9 +178,9 @@
 }
 
 .close-report {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #888;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-label);
   padding: 14px 28px;
   border-radius: 12px;
   font-weight: 600;
@@ -170,6 +189,6 @@
 }
 
 .close-report:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #aaa;
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
 }

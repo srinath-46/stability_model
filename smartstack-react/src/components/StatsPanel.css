@@ -2,16 +2,18 @@
   position: absolute;
   left: 20px;
   top: 20px;
-  background: rgba(0, 0, 0, 0.85);
+  background: var(--bg-panel);
   backdrop-filter: blur(20px);
   padding: 24px;
   border-radius: 20px;
-  color: white;
+  color: var(--text-primary);
   min-width: 280px;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 0 40px rgba(59, 130, 246, 0.15),
-    0 25px 50px rgba(0, 0, 0, 0.4);
+  max-height: calc(100% - 40px);
+  overflow-y: auto;
+  border: 1px solid var(--border-accent);
+  box-shadow:
+    0 0 40px var(--shadow-glow),
+    0 25px 50px var(--shadow-dark);
   z-index: 100;
   animation: slideInLeft 0.5s ease-out;
 }
@@ -23,48 +25,48 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-blue));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .stats-panel h1 svg {
-  color: #3b82f6;
+  color: var(--accent-blue);
 }
 
 .stat-row {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 0.9rem;
-  color: #888;
+  color: var(--text-label);
   transition: all 0.3s;
 }
 
 .stat-row:hover {
-  color: #aaa;
+  color: var(--text-secondary);
 }
 
 .stat-row svg {
-  color: #555;
+  color: var(--text-dim);
 }
 
 .stat-val {
-  color: #60a5fa;
+  color: var(--text-value);
   font-weight: 600;
 }
 
 .legend {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .legend span {
@@ -85,7 +87,7 @@
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 12px;
-  color: #60a5fa;
+  color: var(--text-value);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;

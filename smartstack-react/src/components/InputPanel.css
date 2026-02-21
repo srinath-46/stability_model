@@ -2,20 +2,26 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  color: white;
-  background: rgba(0, 0, 0, 0.85);
+  color: var(--text-primary);
+  background: var(--bg-panel);
   backdrop-filter: blur(20px);
   padding: 24px;
   border-radius: 20px;
   width: 360px;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 0 40px rgba(59, 130, 246, 0.15),
-    0 25px 50px rgba(0, 0, 0, 0.4);
-  max-height: 92vh;
+  max-width: calc(100% - 40px);
+  border: 1px solid var(--border-accent);
+  box-shadow:
+    0 0 40px var(--shadow-glow),
+    0 25px 50px var(--shadow-dark);
+  max-height: calc(100% - 40px);
   overflow-y: auto;
   z-index: 100;
   animation: slideInRight 0.5s ease-out;
+}
+
+.input-panel::-webkit-scrollbar-track {
+  margin: 16px 0;
+  border-radius: 4px;
 }
 
 .input-panel h2 {
@@ -25,16 +31,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #fff;
+  color: var(--text-heading);
 }
 
 .input-panel h2 svg {
-  color: #60a5fa;
+  color: var(--accent-blue-light);
 }
 
 .section-title {
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-muted);
   margin: 24px 0 12px 0;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -45,7 +51,7 @@
 }
 
 .section-title svg {
-  color: #555;
+  color: var(--text-dim);
 }
 
 .truck-options {
@@ -57,15 +63,15 @@
 .truck-option {
   padding: 14px 10px;
   text-align: center;
-  background: rgba(26, 26, 46, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-panel-row);
+  border: 1px solid var(--border-primary);
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .truck-option:hover:not(.selected) {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-accent);
   transform: translateY(-2px);
 }
 
@@ -79,7 +85,7 @@
 .truck-option .icon {
   font-size: 1.3rem;
   margin-bottom: 4px;
-  color: #888;
+  color: var(--text-label);
 }
 
 .truck-option.selected .icon {
@@ -88,14 +94,14 @@
 
 .truck-option .name {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--text-label);
   margin-top: 4px;
   font-weight: 500;
 }
 
 .truck-option .dims {
   font-size: 0.65rem;
-  color: #555;
+  color: var(--text-dim);
 }
 
 .box-inputs {
@@ -109,29 +115,57 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  background: rgba(26, 26, 46, 0.6);
+  background: var(--bg-panel-row);
   border-radius: 12px;
-  border-left: 3px solid #666;
+  border-left: 3px solid var(--text-muted);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.4s ease-out backwards;
 }
 
-.box-row:nth-child(1) { animation-delay: 0.1s; }
-.box-row:nth-child(2) { animation-delay: 0.15s; }
-.box-row:nth-child(3) { animation-delay: 0.2s; }
-.box-row:nth-child(4) { animation-delay: 0.25s; }
-.box-row:nth-child(5) { animation-delay: 0.3s; }
+.box-row:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.box-row:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.box-row:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.box-row:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.box-row:nth-child(5) {
+  animation-delay: 0.3s;
+}
 
 .box-row:hover {
-  background: rgba(26, 26, 46, 0.8);
+  background: var(--bg-panel-row-hover);
   transform: translateX(4px);
 }
 
-.box-row.electronics { border-color: #a855f7; }
-.box-row.standard { border-color: #22c55e; }
-.box-row.appliance { border-color: #3b82f6; }
-.box-row.furniture { border-color: #f59e0b; }
-.box-row.industrial { border-color: #ef4444; }
+.box-row.electronics {
+  border-color: #a855f7;
+}
+
+.box-row.standard {
+  border-color: #22c55e;
+}
+
+.box-row.appliance {
+  border-color: #3b82f6;
+}
+
+.box-row.furniture {
+  border-color: #f59e0b;
+}
+
+.box-row.industrial {
+  border-color: #ef4444;
+}
 
 .box-info {
   flex: 1;
@@ -139,7 +173,7 @@
 
 .box-info .name {
   font-size: 0.85rem;
-  color: #ddd;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -147,12 +181,12 @@
 }
 
 .box-info .name svg {
-  color: #888;
+  color: var(--text-label);
 }
 
 .box-info .dims {
   font-size: 0.65rem;
-  color: #555;
+  color: var(--text-dim);
   margin-top: 2px;
 }
 
@@ -166,10 +200,10 @@
   width: 60px;
   text-align: center;
   padding: 10px;
-  background: rgba(10, 10, 26, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
   border-radius: 10px;
-  color: white;
+  color: var(--text-primary);
   font-size: 0.95rem;
   font-weight: 600;
   transition: all 0.3s;
@@ -177,13 +211,13 @@
 
 .box-row input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent-blue);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .max-label {
   font-size: 0.6rem;
-  color: #444;
+  color: var(--text-dim);
   margin-top: 4px;
 }
 
@@ -195,11 +229,11 @@
   border-radius: 14px;
   text-align: center;
   font-size: 0.9rem;
-  color: #888;
+  color: var(--text-label);
 }
 
 .total-bar strong {
-  color: #60a5fa;
+  color: var(--text-value);
   font-size: 1.2rem;
 }
 
@@ -217,11 +251,11 @@
 .capacity-warning {
   margin-top: 12px;
   padding: 12px 14px;
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--error-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 12px;
   font-size: 0.85rem;
-  color: #fca5a5;
+  color: var(--error-text);
   text-align: center;
   animation: fadeInScale 0.3s ease-out;
 }
@@ -259,9 +293,9 @@
 
 .btn-reset {
   padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #888;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  color: var(--text-label);
+  border: 1px solid var(--border-primary);
   border-radius: 14px;
   cursor: pointer;
   font-weight: 600;
@@ -269,8 +303,8 @@
 }
 
 .btn-reset:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: #aaa;
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
 }
 
 .btn-reset:disabled {

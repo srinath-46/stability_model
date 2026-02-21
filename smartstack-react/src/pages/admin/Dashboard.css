@@ -21,10 +21,10 @@
 
 /* Admin table */
 .admin-table-container {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--bg-table-container);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
   animation: fadeInUp 0.5s ease-out;
 }
@@ -36,8 +36,8 @@
 }
 
 .admin-table th {
-  background: rgba(0, 0, 0, 0.5);
-  color: #60a5fa;
+  background: var(--bg-table-header);
+  color: var(--text-value);
   padding: 18px 16px;
   text-align: left;
   font-size: 0.75rem;
@@ -48,8 +48,8 @@
 
 .admin-table td {
   padding: 18px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  color: #aaa;
+  border-bottom: 1px solid var(--border-table-row);
+  color: var(--text-secondary);
   transition: all 0.3s;
 }
 
@@ -59,11 +59,11 @@
 
 .admin-table tr:hover td {
   background: rgba(59, 130, 246, 0.05);
-  color: #ddd;
+  color: var(--text-primary);
 }
 
 .project-name {
-  color: #fff !important;
+  color: var(--text-heading) !important;
   font-weight: 600;
 }
 
@@ -79,7 +79,7 @@
 .view-btn {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
+  color: var(--text-value);
   padding: 10px 18px;
   border-radius: 10px;
   cursor: pointer;
@@ -164,7 +164,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-overlay);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -216,8 +216,8 @@
 }
 
 .close-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 
 .add-driver-form {
@@ -255,21 +255,21 @@
 }
 
 .error-msg {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--error-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
   padding: 12px;
   border-radius: 10px;
-  color: #fca5a5;
+  color: var(--error-text);
   font-size: 0.9rem;
   text-align: center;
 }
 
 .success-msg {
-  background: rgba(34, 197, 94, 0.15);
+  background: var(--success-bg);
   border: 1px solid rgba(34, 197, 94, 0.3);
   padding: 12px;
   border-radius: 10px;
-  color: #4ade80;
+  color: var(--success-text);
   font-size: 0.9rem;
   text-align: center;
 }

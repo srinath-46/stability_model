@@ -1,6 +1,6 @@
 .new-project-page {
   min-height: 100vh;
-  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 50%, #050510 100%);
+  background: radial-gradient(ellipse at center, var(--bg-radial-center) 0%, var(--bg-radial-mid) 50%, var(--bg-radial-edge) 100%);
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -9,9 +9,10 @@
   align-items: center;
   gap: 20px;
   padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--bg-glass);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: 0 2px 12px var(--shadow-dark);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -19,9 +20,9 @@
 }
 
 .back-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #888;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-label);
   padding: 10px 18px;
   border-radius: 10px;
   cursor: pointer;
@@ -31,8 +32,8 @@
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #aaa;
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
   transform: translateX(-2px);
 }
 
@@ -44,10 +45,10 @@
   width: 100%;
   max-width: 400px;
   padding: 14px 20px;
-  background: rgba(10, 10, 26, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -55,12 +56,12 @@
 
 .project-name-input input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent-blue);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
 .project-name-input input::placeholder {
-  color: #444;
+  color: var(--text-dim);
 }
 
 .submit-btn {
@@ -90,6 +91,7 @@
 .simulation-container {
   position: relative;
   height: calc(100vh - 75px);
+  overflow: hidden;
   animation: fadeIn 0.6s ease-out 0.2s backwards;
 }
 
@@ -98,17 +100,17 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--bg-hint);
   backdrop-filter: blur(10px);
   padding: 14px 24px;
   border-radius: 30px;
   font-size: 0.85rem;
-  color: #888;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-label);
+  border: 1px solid var(--border-primary);
   animation: fadeInUp 0.5s ease-out, pulse 2s ease-in-out infinite 1s;
   z-index: 50;
 }
 
 .click-hint svg {
-  color: #60a5fa;
+  color: var(--text-value);
 }
