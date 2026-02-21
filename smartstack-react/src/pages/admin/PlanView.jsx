@@ -7,7 +7,8 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit } from 'lucide-react';
+import AssignPriceModal from '../../components/AssignPriceModal';
+import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
 import './PlanView.css';
 
 export default function PlanView() {
@@ -23,6 +24,7 @@ export default function PlanView() {
   const [tooltipPos, setTooltipPos] = useState(null);
   const [showReport, setShowReport] = useState(false);
   const [assigning, setAssigning] = useState(false);
+  const [showPriceModal, setShowPriceModal] = useState(false);
   const [processingCancel, setProcessingCancel] = useState(false);
 
   useEffect(() => {
@@ -50,13 +52,24 @@ export default function PlanView() {
   };
 
   const handleAssign = async () => {
+    setShowPriceModal(true);
+  };
+
+  const handleConfirmAssignment = async (amount) => {
     setAssigning(true);
     const result = await updateProject(id, {
       status: 'assigned',
-      assignedAt: new Date().toISOString()
+      assignedAt: new Date().toISOString(),
+      payment: {
+        amount,
+        currency: 'INR',
+        status: 'pending'
+      }
     });
+
     if (result.success) {
-      toast.success('Plan assigned successfully!');
+      toast.success('Plan assigned with payment: ₹' + amount.toLocaleString());
+      setShowPriceModal(false);
       const data = await getProject(id);
       setProject(data);
     } else {
@@ -214,9 +227,17 @@ export default function PlanView() {
           onAssign={handleAssign}
           assignDisabled={assigning}
           isAssigned={project.status === 'assigned'}
+          payment={project.payment}
         />
 
         <BoxTooltip item={selectedBox} position={tooltipPos} />
+
+        <AssignPriceModal
+          project={project}
+          isOpen={showPriceModal}
+          onClose={() => setShowPriceModal(false)}
+          onConfirm={handleConfirmAssignment}
+        />
 
         <ReportModal
           isOpen={showReport}

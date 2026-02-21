@@ -149,3 +149,15 @@
   font-weight: 600;
   font-size: 0.9rem;
 }
+
+.stat-row.payment-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-primary);
+}
+
+.stat-val.earnings {
+  color: #fbbf24;
+  font-size: 1.1rem;
+  font-weight: 800;
+}

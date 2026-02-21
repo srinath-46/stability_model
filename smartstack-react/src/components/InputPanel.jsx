@@ -19,11 +19,13 @@ const TRUCK_ICONS = {
   xl: Truck
 };
 
-export default function InputPanel({ 
-  truckKey, 
-  onTruckChange, 
-  boxCounts, 
+export default function InputPanel({
+  truckKey,
+  onTruckChange,
+  boxCounts,
   onBoxCountChange,
+  distance,
+  onDistanceChange,
   onLoadCargo,
   onReset,
   disabled = false
@@ -36,7 +38,7 @@ export default function InputPanel({
     const truck = TRUCKS[truckKey];
     const newLimits = calculateMaxLimits(truck);
     setLimits(newLimits);
-    
+
     Object.entries(boxCounts).forEach(([type, count]) => {
       if (count > newLimits[type]) {
         onBoxCountChange(type, newLimits[type]);
@@ -48,7 +50,7 @@ export default function InputPanel({
     const truck = TRUCKS[truckKey];
     const truckVolume = truck.w * truck.h * truck.d;
     const usableVolume = truckVolume * 0.55;
-    
+
     let totalVolume = 0;
     Object.entries(boxCounts).forEach(([type, count]) => {
       const config = BOX_TYPES[type];
@@ -57,10 +59,10 @@ export default function InputPanel({
         totalVolume += avgVol * count;
       }
     });
-    
+
     const usage = (totalVolume / usableVolume) * 100;
     setCapacityUsage(Math.min(100, usage));
-    
+
     if (totalVolume > usableVolume) {
       setWarning('Too many boxes! Reduce quantity or select larger truck.');
     } else {
@@ -73,11 +75,11 @@ export default function InputPanel({
   return (
     <div className="input-panel">
       <h2><Package size={18} /> Shipment Configuration</h2>
-      
+
       <div className="section-title"><Truck size={14} /> Select Truck Size</div>
       <div className="truck-options">
         {Object.entries(TRUCKS).map(([key, truck]) => (
-          <div 
+          <div
             key={key}
             className={`truck-option ${truckKey === key ? 'selected' : ''}`}
             onClick={() => !disabled && onTruckChange(key)}
@@ -85,10 +87,11 @@ export default function InputPanel({
             <div className="icon"><Truck size={24} /></div>
             <div className="name">{truck.name}</div>
             <div className="dims">{truck.w}×{truck.h}×{truck.d}</div>
+            <div className="price-label">Base: ₹{truck.basePrice.toLocaleString()}</div>
           </div>
         ))}
       </div>
-      
+
       <div className="section-title"><Box size={14} /> Package Quantities</div>
       <div className="box-inputs">
         {Object.entries(BOX_TYPES).map(([type, config]) => {
@@ -118,7 +121,20 @@ export default function InputPanel({
           );
         })}
       </div>
-      
+
+      <div className="section-title"><Rocket size={14} /> Trip Logistics</div>
+      <div className="distance-input-row">
+        <div className="name">Est. Route Distance (km)</div>
+        <input
+          type="number"
+          value={distance}
+          min={1}
+          max={5000}
+          onChange={(e) => onDistanceChange(Math.max(1, parseInt(e.target.value) || 0))}
+          disabled={disabled}
+        />
+      </div>
+
       <div className="total-bar">
         Total: <strong>{totalItems}</strong> packages
         <div className="capacity-row">
@@ -128,16 +144,16 @@ export default function InputPanel({
           </span>
         </div>
       </div>
-      
+
       {warning && (
         <div className="capacity-warning">
           <AlertTriangle size={14} /> {warning}
         </div>
       )}
-      
+
       <div className="action-buttons">
-        <button 
-          className="btn-run" 
+        <button
+          className="btn-run"
           onClick={onLoadCargo}
           disabled={disabled || warning || totalItems === 0}
         >

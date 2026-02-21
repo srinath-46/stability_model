@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
 import { useEffect, useState, useMemo } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit } from 'lucide-react';
+import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit, IndianRupee, MapPin } from 'lucide-react';
+import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
@@ -21,6 +22,8 @@ export default function AdminDashboard() {
   const [addSuccess, setAddSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
+  const [showPriceModal, setShowPriceModal] = useState(false);
 
   const loadProjects = async () => {
     const data = await getAllProjects();
@@ -65,12 +68,29 @@ export default function AdminDashboard() {
     setAddingDriver(false);
   };
 
-  const handleAssignDriver = async (projectId) => {
-    const result = await updateProject(projectId, {
+  const handleAssignDriver = (project) => {
+    setSelectedProjectForAssign(project);
+    setShowPriceModal(true);
+  };
+
+  const handleConfirmAssignment = async (amount) => {
+    if (!selectedProjectForAssign) return;
+
+    const result = await updateProject(selectedProjectForAssign.id, {
       status: 'assigned',
-      assignedAt: new Date().toISOString()
+      assignedAt: new Date().toISOString(),
+      payment: {
+        amount,
+        currency: 'INR',
+        status: 'pending'
+      }
     });
-    if (result.success) loadProjects();
+
+    if (result.success) {
+      setShowPriceModal(false);
+      setSelectedProjectForAssign(null);
+      loadProjects();
+    }
   };
 
   const handleApproveCancel = async (projectId) => {
@@ -90,15 +110,16 @@ export default function AdminDashboard() {
     if (result.success) loadProjects();
   };
 
+
   // Computed stats
   const stats = useMemo(() => {
     if (projects.length === 0) return null;
-    const avgUtil = projects.reduce((acc, p) => acc + (p.utilization || 0), 0) / projects.length;
-    const pending = projects.filter(p => p.status !== 'assigned').length;
+    const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
+    const pending = projects.filter(p => !p.payment).length;
     const uniqueDrivers = new Set(projects.map(p => p.driverName)).size;
     return {
       totalPlans: projects.length,
-      avgUtilization: avgUtil.toFixed(1),
+      totalRevenue: revenue,
       pendingReview: pending,
       totalDrivers: uniqueDrivers
     };
@@ -161,18 +182,18 @@ export default function AdminDashboard() {
                 <span className="summary-label">Total Plans</span>
               </div>
             </div>
-            <div className="summary-card">
-              <div className="summary-icon"><TrendingUp size={20} /></div>
+            <div className="summary-card revenue-card">
+              <div className="summary-icon"><IndianRupee size={20} /></div>
               <div className="summary-data">
-                <span className="summary-value">{stats.avgUtilization}%</span>
-                <span className="summary-label">Avg Utilization</span>
+                <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
+                <span className="summary-label">Fleet Revenue</span>
               </div>
             </div>
             <div className="summary-card">
               <div className="summary-icon"><Clock size={20} /></div>
               <div className="summary-data">
                 <span className="summary-value">{stats.pendingReview}</span>
-                <span className="summary-label">Pending Review</span>
+                <span className="summary-label">Pending Price</span>
               </div>
             </div>
             <div className="summary-card">
@@ -184,6 +205,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
 
         {/* Search & Filter */}
         {projects.length > 0 && (
@@ -239,7 +261,9 @@ export default function AdminDashboard() {
                   <th>Driver</th>
                   <th>Truck</th>
                   <th>Items</th>
+                  <th>Dist.</th>
                   <th>Utilization</th>
+                  <th>Payment</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -256,6 +280,7 @@ export default function AdminDashboard() {
                     </td>
                     <td><Truck size={14} /> {project.truckName}</td>
                     <td><Package size={14} /> {project.itemCount}</td>
+                    <td><MapPin size={14} /> {project.distance || 0} km</td>
                     <td>
                       <div className="table-util-cell">
                         <span className="utilization-badge">
@@ -268,6 +293,13 @@ export default function AdminDashboard() {
                           />
                         </div>
                       </div>
+                    </td>
+                    <td className="payment-cell">
+                      {project.status === 'assigned' || project.status === 'cancel_requested' || project.status === 'cancelled' ? (
+                        <span className="earnings-badge">₹{project.payment?.amount?.toLocaleString()}</span>
+                      ) : (
+                        <span className="not-set">-</span>
+                      )}
                     </td>
                     <td>
                       <span className={`status-badge ${project.status}`}>
@@ -284,7 +316,7 @@ export default function AdminDashboard() {
                       {project.status === 'submitted' && (
                         <button
                           className="assign-btn"
-                          onClick={() => handleAssignDriver(project.id)}
+                          onClick={() => handleAssignDriver(project)}
                         >
                           <CheckCircle size={14} /> Assign
                         </button>
@@ -378,6 +410,13 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      <AssignPriceModal
+        project={selectedProjectForAssign}
+        isOpen={showPriceModal}
+        onClose={() => setShowPriceModal(false)}
+        onConfirm={handleConfirmAssignment}
+      />
     </div>
   );
 }

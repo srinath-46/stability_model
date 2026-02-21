@@ -36,14 +36,15 @@ export default function DriverDashboard() {
   // Computed stats
   const stats = useMemo(() => {
     if (projects.length === 0) return null;
-    const totalItems = projects.reduce((acc, p) => acc + (p.itemCount || 0), 0);
-    const avgUtil = projects.reduce((acc, p) => acc + (p.utilization || 0), 0) / projects.length;
+    const items = projects.reduce((acc, p) => acc + (p.itemCount || 0), 0);
+    const earnings = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
     return {
       totalProjects: projects.length,
-      totalItems,
-      avgUtilization: avgUtil.toFixed(1)
+      totalItems: items,
+      totalEarnings: earnings
     };
   }, [projects]);
+
 
   // Filtered projects
   const filteredProjects = useMemo(() => {
@@ -102,19 +103,20 @@ export default function DriverDashboard() {
             <div className="summary-card">
               <div className="summary-icon"><Package size={20} /></div>
               <div className="summary-data">
-                <span className="summary-value">{stats.totalItems}</span>
+                <span className="summary-value">{stats.totalItems.toLocaleString()}</span>
                 <span className="summary-label">Items Packed</span>
               </div>
             </div>
-            <div className="summary-card">
+            <div className="summary-card earnings-card">
               <div className="summary-icon"><TrendingUp size={20} /></div>
               <div className="summary-data">
-                <span className="summary-value">{stats.avgUtilization}%</span>
-                <span className="summary-label">Avg Utilization</span>
+                <span className="summary-value">₹{stats.totalEarnings.toLocaleString()}</span>
+                <span className="summary-label">Total Earnings</span>
               </div>
             </div>
           </div>
         )}
+
 
         {/* Search & Filter Bar */}
         {projects.length > 0 && (
@@ -174,6 +176,12 @@ export default function DriverDashboard() {
                     {project.status === 'cancel_requested' ? 'Cancel Pending' : project.status === 'cancelled' ? 'Cancelled' : project.status}
                   </span>
                 </div>
+                {project.payment && (
+                  <div className="card-earnings">
+                    <span className="earnings-label">Trip Fee:</span>
+                    <span className="earnings-value">₹{project.payment.amount?.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="project-meta">
                   <div className="meta-row">
                     <span><Truck size={14} /> {project.truckName}</span>
