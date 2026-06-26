@@ -19,19 +19,24 @@ export function useProjects() {
   // Get all projects (for admin)
   const getAllProjects = async () => {
     try {
+      console.log('Fetching all projects from Firebase...');
       // Simple query without orderBy to avoid index requirements
       const snapshot = await getDocs(collection(db, 'projects'));
+      console.log('Projects snapshot received:', snapshot.docs.length, 'documents');
       const projectsList = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
       }));
+      console.log('Projects processed:', projectsList);
       // Sort client-side
       projectsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setProjects(projectsList);
       return projectsList;
     } catch (error) {
       console.error('Error fetching all projects:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
       return [];
     }
   };

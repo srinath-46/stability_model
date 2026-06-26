@@ -13,8 +13,16 @@ export default function AdminDashboard() {
   const { getAllProjects, updateProject } = useProjects();
   const navigate = useNavigate();
 
+  // Debug logging
+  useEffect(() => {
+    console.log('AdminDashboard mounted');
+    console.log('User:', user);
+    console.log('Theme:', theme);
+  }, [user, theme]);
+
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [showAddDriver, setShowAddDriver] = useState(false);
   const [newDriver, setNewDriver] = useState({ name: '', email: '', password: '' });
   const [addingDriver, setAddingDriver] = useState(false);
@@ -26,9 +34,18 @@ export default function AdminDashboard() {
   const [showPriceModal, setShowPriceModal] = useState(false);
 
   const loadProjects = async () => {
-    const data = await getAllProjects();
-    setProjects(data);
-    setLoading(false);
+    try {
+      console.log('Loading projects...');
+      setLoadError('');
+      const data = await getAllProjects();
+      console.log('Projects loaded:', data);
+      setProjects(data);
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+      setLoadError(`Failed to load projects: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -137,9 +154,48 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="dashboard-page admin loading-state">
-        <Loader size={48} className="spinner" />
-        <p>Loading plans...</p>
+      <div className="dashboard-page admin loading-state" style={{background: '#0a0a1a'}}>
+        <Loader size={48} className="spinner" style={{color: '#60a5fa'}} />
+        <p style={{color: '#ffffff', marginTop: '20px', fontSize: '1.1rem'}}>Loading admin dashboard...</p>
+        {loadError && <p style={{color: '#f87171', marginTop: '12px'}}>{loadError}</p>}
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="dashboard-page admin">
+        <header className="dashboard-header">
+          <div className="header-left">
+            <span className="logo"><Truck size={28} /></span>
+            <h1>SmartStack Pro</h1>
+            <span className="admin-badge">ADMIN</span>
+          </div>
+          <div className="header-right">
+            <button className="theme-toggle" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <span className="user-info"><User size={16} /> {user?.name}</span>
+            <button className="logout-btn" onClick={handleLogout}>
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
+        </header>
+        <main className="dashboard-main">
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            padding: '24px',
+            borderRadius: '16px',
+            color: '#fca5a5'
+          }}>
+            <h2>Error Loading Dashboard</h2>
+            <p>{loadError}</p>
+            <button onClick={() => window.location.reload()} style={{marginTop: '12px'}}>
+              Retry
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
