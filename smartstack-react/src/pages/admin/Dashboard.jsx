@@ -2,88 +2,68 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
-import { useEffect, useState, useMemo } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
+import { useDrivers } from '../../hooks/useDrivers';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { 
+  Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle,
+  ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin
+} from 'lucide-react';
 import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
   const { user, logout, register } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { getAllProjects, updateProject } = useProjects();
+  const { getAllProjects, updateProject, deleteProject } = useProjects();
+  const { drivers, getAllDrivers } = useDrivers();
   const navigate = useNavigate();
-
-  // Debug logging
-  useEffect(() => {
-    console.log('AdminDashboard mounted');
-    console.log('User:', user);
-    console.log('Theme:', theme);
-  }, [user, theme]);
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
-  const [showAddDriver, setShowAddDriver] = useState(false);
-  const [newDriver, setNewDriver] = useState({ name: '', email: '', password: '' });
-  const [addingDriver, setAddingDriver] = useState(false);
-  const [addError, setAddError] = useState('');
-  const [addSuccess, setAddSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
   const [showPriceModal, setShowPriceModal] = useState(false);
 
-  const loadProjects = async () => {
-    try {
-      console.log('Loading projects...');
-      setLoadError('');
-      const data = await getAllProjects();
-      console.log('Projects loaded:', data);
-      setProjects(data);
-    } catch (error) {
-      console.error('Failed to load projects:', error);
-      setLoadError(`Failed to load projects: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loadProjects = useCallback(async () => {
+    const data = await getAllProjects();
+    setProjects(data);
+    await getAllDrivers();
+    setLoading(false);
+  }, [getAllProjects, getAllDrivers]);
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [loadProjects]);
+
+  const stats = useMemo(() => {
+    return {
+      totalPlans: projects.length,
+      totalRevenue: projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0),
+      pendingReview: projects.filter(p => p.status === 'submitted').length,
+      totalDrivers: drivers.length
+    };
+  }, [projects, drivers]);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesSearch = 
+        project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilter = 
+        statusFilter === 'all' || 
+        project.status === statusFilter;
+      
+      return matchesSearch && matchesFilter;
+    });
+  }, [projects, searchQuery, statusFilter]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
 
-  const handleAddDriver = async (e) => {
-    e.preventDefault();
-    setAddError('');
-    setAddSuccess('');
-    setAddingDriver(true);
-
-    if (newDriver.password.length < 6) {
-      setAddError('Password must be at least 6 characters');
-      setAddingDriver(false);
-      return;
-    }
-
-    const result = await register(newDriver.email, newDriver.password, newDriver.name, 'driver');
-
-    if (result.success) {
-      setAddSuccess(`Driver "${newDriver.name}" added successfully!`);
-      setNewDriver({ name: '', email: '', password: '' });
-      setTimeout(() => {
-        setShowAddDriver(false);
-        setAddSuccess('');
-      }, 2000);
-    } else {
-      setAddError(result.error);
-    }
-
-    setAddingDriver(false);
-  };
 
   const handleAssignDriver = (project) => {
     setSelectedProjectForAssign(project);
@@ -209,9 +189,6 @@ export default function AdminDashboard() {
           <span className="admin-badge">ADMIN</span>
         </div>
         <div className="header-right">
-          <button className="add-driver-btn" onClick={() => setShowAddDriver(true)}>
-            <UserPlus size={16} /> Add Driver
-          </button>
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -252,12 +229,13 @@ export default function AdminDashboard() {
                 <span className="summary-label">Pending Price</span>
               </div>
             </div>
-            <div className="summary-card">
+            <div className="summary-card clickable" onClick={() => navigate('/admin/drivers')}>
               <div className="summary-icon"><User size={20} /></div>
               <div className="summary-data">
                 <span className="summary-value">{stats.totalDrivers}</span>
                 <span className="summary-label">Drivers</span>
               </div>
+              <div className="card-action-hint">Manage <ArrowLeft size={12} style={{ transform: 'rotate(180deg)' }} /></div>
             </div>
           </div>
         )}
@@ -317,6 +295,7 @@ export default function AdminDashboard() {
                   <th>Driver</th>
                   <th>Truck</th>
                   <th>Items</th>
+                  <th>Dist.</th>
                   <th>Utilization</th>
                   <th>Payment</th>
                   <th>Status</th>
@@ -335,6 +314,7 @@ export default function AdminDashboard() {
                     </td>
                     <td><Truck size={14} /> {project.truckName}</td>
                     <td><Package size={14} /> {project.itemCount}</td>
+                    <td><MapPin size={14} /> {project.distance || 0} km</td>
                     <td>
                       <div className="table-util-cell">
                         <span className="utilization-badge">
@@ -408,62 +388,6 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {/* Add Driver Modal */}
-      {showAddDriver && (
-        <div className="modal-overlay" onClick={() => setShowAddDriver(false)}>
-          <div className="add-driver-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3><UserPlus size={20} /> Add New Driver</h3>
-              <button className="close-btn" onClick={() => setShowAddDriver(false)}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddDriver} className="add-driver-form">
-              <div className="form-group">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  value={newDriver.name}
-                  onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
-                  placeholder="Enter driver's name"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={newDriver.email}
-                  onChange={(e) => setNewDriver({ ...newDriver, email: e.target.value })}
-                  placeholder="Enter driver's email"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={newDriver.password}
-                  onChange={(e) => setNewDriver({ ...newDriver, password: e.target.value })}
-                  placeholder="Min 6 characters"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              {addError && <div className="error-msg">{addError}</div>}
-              {addSuccess && <div className="success-msg">{addSuccess}</div>}
-
-              <button type="submit" className="submit-driver-btn" disabled={addingDriver}>
-                {addingDriver ? 'Adding...' : <><UserPlus size={16} /> Add Driver</>}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       <AssignPriceModal
         project={selectedProjectForAssign}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { 
   collection, 
   doc, 
@@ -17,10 +17,8 @@ export function useProjects() {
   const [projects, setProjects] = useState([]);
 
   // Get all projects (for admin)
-  const getAllProjects = async () => {
+  const getAllProjects = useCallback(async () => {
     try {
-      console.log('Fetching all projects from Firebase...');
-      // Simple query without orderBy to avoid index requirements
       const snapshot = await getDocs(collection(db, 'projects'));
       console.log('Projects snapshot received:', snapshot.docs.length, 'documents');
       const projectsList = snapshot.docs.map(doc => ({
@@ -28,8 +26,6 @@ export function useProjects() {
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
       }));
-      console.log('Projects processed:', projectsList);
-      // Sort client-side
       projectsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setProjects(projectsList);
       return projectsList;
@@ -39,13 +35,12 @@ export function useProjects() {
       console.error('Error message:', error.message);
       return [];
     }
-  };
+  }, []);
 
   // Get projects by driver UID
-  const getProjectsByDriver = async (driverUid) => {
+  const getProjectsByDriver = useCallback(async (driverUid) => {
     if (!driverUid) return [];
     try {
-      // Simple query with just the where clause
       const q = query(
         collection(db, 'projects'),
         where('driverUid', '==', driverUid)
@@ -56,7 +51,6 @@ export function useProjects() {
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
       }));
-      // Sort client-side
       projectsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setProjects(projectsList);
       return projectsList;
@@ -64,10 +58,10 @@ export function useProjects() {
       console.error('Error fetching driver projects:', error);
       return [];
     }
-  };
+  }, []);
 
   // Add a new project
-  const addProject = async (project) => {
+  const addProject = useCallback(async (project) => {
     try {
       const docRef = await addDoc(collection(db, 'projects'), {
         ...project,
@@ -79,10 +73,10 @@ export function useProjects() {
       console.error('Error adding project:', error);
       return { success: false, error: error.message };
     }
-  };
+  }, []);
 
   // Get a single project by ID
-  const getProject = async (projectId) => {
+  const getProject = useCallback(async (projectId) => {
     if (!projectId) return null;
     try {
       const docSnap = await getDoc(doc(db, 'projects', projectId));
@@ -98,10 +92,10 @@ export function useProjects() {
       console.error('Error getting project:', error);
       return null;
     }
-  };
+  }, []);
 
   // Update a project
-  const updateProject = async (projectId, updates) => {
+  const updateProject = useCallback(async (projectId, updates) => {
     try {
       await updateDoc(doc(db, 'projects', projectId), {
         ...updates,
@@ -112,10 +106,10 @@ export function useProjects() {
       console.error('Error updating project:', error);
       return { success: false, error: error.message };
     }
-  };
+  }, []);
 
   // Delete a project
-  const deleteProject = async (projectId) => {
+  const deleteProject = useCallback(async (projectId) => {
     try {
       await deleteDoc(doc(db, 'projects', projectId));
       return { success: true };
@@ -123,7 +117,7 @@ export function useProjects() {
       console.error('Error deleting project:', error);
       return { success: false, error: error.message };
     }
-  };
+  }, []);
 
   return {
     projects,

@@ -8,13 +8,13 @@ import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
 import AssignPriceModal from '../../components/AssignPriceModal';
-import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
 import './PlanView.css';
 
 export default function PlanView() {
   const { id } = useParams();
   const { user, logout } = useAuth();
-  const { getProject, updateProject } = useProjects();
+  const { getProject, deleteProject, updateProject } = useProjects();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -34,7 +34,7 @@ export default function PlanView() {
       setLoading(false);
     };
     loadProject();
-  }, [id]);
+  }, [id, getProject]);
 
   const handleLogout = async () => {
     await logout();
@@ -111,6 +111,17 @@ export default function PlanView() {
     setProcessingCancel(false);
   };
 
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
+      const result = await deleteProject(id);
+      if (result.success) {
+        navigate('/admin/dashboard');
+      } else {
+        alert('Error deleting project: ' + result.error);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="plan-view-page loading-state">
@@ -142,6 +153,9 @@ export default function PlanView() {
           </button>
           <h1>{project.name}</h1>
           <span className="driver-tag">by {project.driverName}</span>
+          <button className="delete-plan-btn" onClick={handleDelete} title="Delete Plan">
+            <Trash2 size={16} /> Delete Plan
+          </button>
         </div>
         <div className="header-right">
           {project.status === 'submitted' && (

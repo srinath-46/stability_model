@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useProjects } from '../../hooks/useProjects';
 import { TRUCKS } from '../../data/trucks';
@@ -11,12 +11,15 @@ import StatsPanel from '../../components/StatsPanel';
 import InputPanel from '../../components/InputPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-import { ArrowLeft, Check, MousePointer, Loader } from 'lucide-react';
+import { ArrowLeft, Check, MousePointer, Loader, Save } from 'lucide-react';
 import './NewProject.css';
 
 export default function NewProject() {
+  const { id } = useParams();
+  const isEditing = !!id;
+  
   const { user } = useAuth();
-  const { addProject } = useProjects();
+  const { addProject, getProject, updateProject } = useProjects();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -38,10 +41,32 @@ export default function NewProject() {
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [isLoadingProject, setIsLoadingProject] = useState(isEditing);
   const [selectedBox, setSelectedBox] = useState(null);
   const [tooltipPos, setTooltipPos] = useState(null);
   const [showReport, setShowReport] = useState(false);
+
+  // Load project if editing
+  useEffect(() => {
+    if (isEditing) {
+      const loadProject = async () => {
+        const project = await getProject(id);
+        if (project) {
+          setProjectName(project.name);
+          setTruckKey(project.truckKey);
+          if (project.boxCounts) {
+            setBoxCounts(project.boxCounts);
+          }
+          setPackedItems(project.items || []);
+          setUtilization(project.utilization || 0);
+          setStability(project.stability || 100);
+          setIsComplete(true);
+        }
+        setIsLoadingProject(false);
+      };
+      loadProject();
+    }
+  }, [id, isEditing, getProject]);
 
   const truck = TRUCKS[truckKey];
   const containerVolume = truck.w * truck.h * truck.d;
@@ -126,8 +151,7 @@ export default function NewProject() {
 
   const handleSubmitPlan = async () => {
     setIsSubmitting(true);
-
-    const project = {
+    const projectData = {
       name: projectName,
       driverUid: user.uid,
       driverName: user.name,
@@ -138,11 +162,16 @@ export default function NewProject() {
       itemCount: packedItems.length,
       utilization,
       stability,
+      status: 'submitted', // Reset status to submitted upon modification
       distance
     };
-
-    const result = await addProject(project);
-
+    
+    let result;
+    if (isEditing) {
+      result = await updateProject(id, projectData);
+    } else {
+      result = await addProject(projectData);
+    }
     if (result.success) {
       navigate('/driver/dashboard');
     } else {
@@ -150,6 +179,15 @@ export default function NewProject() {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoadingProject) {
+    return (
+      <div className="new-project-page loading-state">
+        <Loader size={48} className="spinner" />
+        <p>Loading project details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="new-project-page">
@@ -168,7 +206,13 @@ export default function NewProject() {
         </div>
         {isComplete && (
           <button className="submit-btn" onClick={handleSubmitPlan} disabled={isSubmitting}>
-            {isSubmitting ? <><Loader size={18} className="spinner" /> Saving...</> : <><Check size={18} /> Submit Plan</>}
+            {isSubmitting ? (
+              <><Loader size={18} className="spinner" /> Saving...</>
+            ) : isEditing ? (
+              <><Save size={18} /> Update Plan</>
+            ) : (
+              <><Check size={18} /> Submit Plan</>
+            )}
           </button>
         )}
       </header>

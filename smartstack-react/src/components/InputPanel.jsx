@@ -124,7 +124,7 @@ export default function InputPanel({
 
       <div className="section-title"><Rocket size={14} /> Trip Logistics</div>
       <div className="distance-input-row">
-        <div className="name">Total Distance (km)</div>
+        <div className="name">Est. Route Distance (km)</div>
         <input
           type="number"
           value={distance}
