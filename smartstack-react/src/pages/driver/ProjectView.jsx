@@ -7,11 +7,7 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-<<<<<<< HEAD
-import { ArrowLeft, User, LogOut, MousePointer, Loader, Edit } from 'lucide-react';
-=======
-import { ArrowLeft, User, LogOut, MousePointer, Loader, XCircle, AlertTriangle, X } from 'lucide-react';
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Edit, XCircle, AlertTriangle, X } from 'lucide-react';
 import './ProjectView.css';
 
 export default function ProjectView() {
@@ -103,7 +99,11 @@ export default function ProjectView() {
             <ArrowLeft size={16} /> Back
           </button>
           <h1>{project.name}</h1>
-<<<<<<< HEAD
+          {project.status && (
+            <span className={`status-badge ${project.status}`}>
+              {project.status === 'cancel_requested' ? 'Cancel Pending' : project.status === 'cancelled' ? 'Cancelled' : project.status}
+            </span>
+          )}
           <button 
             className="edit-plan-btn" 
             onClick={() => navigate(`/driver/edit-project/${id}`)}
@@ -111,13 +111,6 @@ export default function ProjectView() {
           >
             <Edit size={16} /> Edit Plan
           </button>
-=======
-          {project.status && (
-            <span className={`status-badge ${project.status}`}>
-              {project.status === 'cancel_requested' ? 'Cancel Pending' : project.status === 'cancelled' ? 'Cancelled' : project.status}
-            </span>
-          )}
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
         </div>
         <div className="header-right">
           {project.status === 'assigned' && (

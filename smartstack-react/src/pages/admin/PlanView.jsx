@@ -7,22 +7,14 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-<<<<<<< HEAD
-import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2 } from 'lucide-react';
-=======
 import AssignPriceModal from '../../components/AssignPriceModal';
-import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
 import './PlanView.css';
 
 export default function PlanView() {
   const { id } = useParams();
   const { user, logout } = useAuth();
-<<<<<<< HEAD
-  const { getProject, deleteProject } = useProjects();
-=======
-  const { getProject, updateProject } = useProjects();
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
+  const { getProject, deleteProject, updateProject } = useProjects();
   const navigate = useNavigate();
   const toast = useToast();
 

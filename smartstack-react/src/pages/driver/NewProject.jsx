@@ -41,12 +41,7 @@ export default function NewProject() {
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-<<<<<<< HEAD
   const [isLoadingProject, setIsLoadingProject] = useState(isEditing);
-  
-=======
-
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
   const [selectedBox, setSelectedBox] = useState(null);
   const [tooltipPos, setTooltipPos] = useState(null);
   const [showReport, setShowReport] = useState(false);
@@ -156,13 +151,7 @@ export default function NewProject() {
 
   const handleSubmitPlan = async () => {
     setIsSubmitting(true);
-<<<<<<< HEAD
-    
     const projectData = {
-=======
-
-    const project = {
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
       name: projectName,
       driverUid: user.uid,
       driverName: user.name,
@@ -173,8 +162,8 @@ export default function NewProject() {
       itemCount: packedItems.length,
       utilization,
       stability,
-<<<<<<< HEAD
-      status: 'submitted' // Reset status to submitted upon modification
+      status: 'submitted', // Reset status to submitted upon modification
+      distance
     };
     
     let result;
@@ -183,14 +172,6 @@ export default function NewProject() {
     } else {
       result = await addProject(projectData);
     }
-    
-=======
-      distance
-    };
-
-    const result = await addProject(project);
-
->>>>>>> 313ca0fcfcab0bce203a722177761dae25d6e294
     if (result.success) {
       navigate('/driver/dashboard');
     } else {

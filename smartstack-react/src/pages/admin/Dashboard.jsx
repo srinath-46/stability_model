@@ -2,14 +2,20 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
-import { useEffect, useState } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle } from 'lucide-react';
+import { useDrivers } from '../../hooks/useDrivers';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { 
+  Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle,
+  ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin
+} from 'lucide-react';
+import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
   const { user, logout, register } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { getAllProjects, updateProject, deleteProject } = useProjects();
+  const { drivers, getAllDrivers } = useDrivers();
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
@@ -22,12 +28,36 @@ export default function AdminDashboard() {
   const loadProjects = useCallback(async () => {
     const data = await getAllProjects();
     setProjects(data);
+    await getAllDrivers();
     setLoading(false);
-  }, [getAllProjects]);
+  }, [getAllProjects, getAllDrivers]);
 
   useEffect(() => {
     loadProjects();
   }, [loadProjects]);
+
+  const stats = useMemo(() => {
+    return {
+      totalPlans: projects.length,
+      totalRevenue: projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0),
+      pendingReview: projects.filter(p => p.status === 'submitted').length,
+      totalDrivers: drivers.length
+    };
+  }, [projects, drivers]);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesSearch = 
+        project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilter = 
+        statusFilter === 'all' || 
+        project.status === statusFilter;
+      
+      return matchesSearch && matchesFilter;
+    });
+  }, [projects, searchQuery, statusFilter]);
 
   const handleLogout = async () => {
     await logout();
