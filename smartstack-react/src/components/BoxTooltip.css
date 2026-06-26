@@ -1,49 +1,49 @@
 .box-tooltip {
   position: fixed;
   display: none;
-  background: rgba(0, 0, 0, 0.95);
+  background: var(--bg-panel);
   backdrop-filter: blur(20px);
-  color: white;
+  color: var(--text-primary);
   padding: 18px 22px;
   border-radius: 16px;
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  border: 1px solid var(--border-accent);
   font-size: 0.85rem;
   pointer-events: none;
   z-index: 2000;
-  box-shadow: 
-    0 0 30px rgba(59, 130, 246, 0.2),
-    0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 30px var(--shadow-glow),
+    0 20px 40px var(--shadow-dark);
   min-width: 220px;
   animation: fadeInScale 0.2s ease-out;
 }
 
 .box-tooltip h3 {
   margin: 0 0 14px 0;
-  color: #60a5fa;
+  color: var(--text-value);
   font-size: 1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .box-tooltip .detail {
   margin: 10px 0;
-  color: #888;
+  color: var(--text-label);
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .box-tooltip .detail svg {
-  color: #555;
+  color: var(--text-dim);
   flex-shrink: 0;
 }
 
 .box-tooltip .detail span {
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 600;
   margin-left: auto;
 }
