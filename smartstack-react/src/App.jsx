@@ -59,6 +59,11 @@ function AppRoutes() {
           <ProjectView />
         </ProtectedRoute>
       } />
+      <Route path="/driver/edit-project/:id" element={
+        <ProtectedRoute allowedRoles={['driver']}>
+          <NewProject />
+        </ProtectedRoute>
+      } />
       
       {/* Admin routes */}
       <Route path="/admin/dashboard" element={

@@ -6,7 +6,7 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-import { ArrowLeft, User, LogOut, MousePointer, Loader } from 'lucide-react';
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Edit } from 'lucide-react';
 import './ProjectView.css';
 
 export default function ProjectView() {
@@ -28,7 +28,7 @@ export default function ProjectView() {
       setLoading(false);
     };
     loadProject();
-  }, [id]);
+  }, [id, getProject]);
 
   const handleLogout = async () => {
     await logout();
@@ -70,6 +70,13 @@ export default function ProjectView() {
             <ArrowLeft size={16} /> Back
           </button>
           <h1>{project.name}</h1>
+          <button 
+            className="edit-plan-btn" 
+            onClick={() => navigate(`/driver/edit-project/${id}`)}
+            title="Edit Plan"
+          >
+            <Edit size={16} /> Edit Plan
+          </button>
         </div>
         <div className="header-right">
           <span className="user-info"><User size={16} /> {user?.name}</span>

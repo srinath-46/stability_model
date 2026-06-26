@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
-import { useEffect, useState } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Trash2 } from 'lucide-react';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
   const { user, logout, register } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { getAllProjects, updateProject } = useProjects();
+  const { getAllProjects, updateProject, deleteProject } = useProjects();
   const navigate = useNavigate();
   
   const [projects, setProjects] = useState([]);
@@ -20,15 +20,15 @@ export default function AdminDashboard() {
   const [addError, setAddError] = useState('');
   const [addSuccess, setAddSuccess] = useState('');
 
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     const data = await getAllProjects();
     setProjects(data);
     setLoading(false);
-  };
+  }, [getAllProjects]);
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [loadProjects]);
 
   const handleLogout = async () => {
     await logout();
@@ -73,6 +73,17 @@ export default function AdminDashboard() {
     if (result.success) {
       // Reload projects to show updated status
       loadProjects();
+    }
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    if (window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
+      const result = await deleteProject(projectId);
+      if (result.success) {
+        loadProjects();
+      } else {
+        alert('Error deleting project: ' + result.error);
+      }
     }
   };
 
@@ -165,6 +176,13 @@ export default function AdminDashboard() {
                           <CheckCircle size={14} /> Assign
                         </button>
                       )}
+                      <button 
+                        className="delete-btn"
+                        onClick={() => handleDeleteProject(project.id)}
+                        title="Delete Plan"
+                      >
+                        <Trash2 size={14} /> Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

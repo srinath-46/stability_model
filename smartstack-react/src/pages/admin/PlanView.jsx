@@ -6,13 +6,13 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-import { ArrowLeft, User, LogOut, MousePointer, Loader } from 'lucide-react';
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2 } from 'lucide-react';
 import './PlanView.css';
 
 export default function PlanView() {
   const { id } = useParams();
   const { user, logout } = useAuth();
-  const { getProject } = useProjects();
+  const { getProject, deleteProject } = useProjects();
   const navigate = useNavigate();
   
   const [project, setProject] = useState(null);
@@ -28,7 +28,7 @@ export default function PlanView() {
       setLoading(false);
     };
     loadProject();
-  }, [id]);
+  }, [id, getProject]);
 
   const handleLogout = async () => {
     await logout();
@@ -38,6 +38,17 @@ export default function PlanView() {
   const handleBoxClick = (item, event) => {
     setSelectedBox(item);
     setTooltipPos({ x: event.clientX || 0, y: event.clientY || 0 });
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
+      const result = await deleteProject(id);
+      if (result.success) {
+        navigate('/admin/dashboard');
+      } else {
+        alert('Error deleting project: ' + result.error);
+      }
+    }
   };
 
   if (loading) {
@@ -71,6 +82,9 @@ export default function PlanView() {
           </button>
           <h1>{project.name}</h1>
           <span className="driver-tag">by {project.driverName}</span>
+          <button className="delete-plan-btn" onClick={handleDelete} title="Delete Plan">
+            <Trash2 size={16} /> Delete Plan
+          </button>
         </div>
         <div className="header-right">
           <span className="admin-badge">ADMIN</span>
