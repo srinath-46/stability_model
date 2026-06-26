@@ -148,6 +148,7 @@ export default function ProjectView() {
           utilization={project.utilization}
           onViewReport={() => setShowReport(true)}
           showReportButton={true}
+          payment={project.payment}
         />
 
         <BoxTooltip item={selectedBox} position={tooltipPos} />

@@ -104,6 +104,13 @@
   color: var(--text-dim);
 }
 
+.truck-option .price-label {
+  font-size: 0.75rem;
+  color: #fbbf24;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
 .box-inputs {
   display: flex;
   flex-direction: column;
@@ -140,6 +147,35 @@
 
 .box-row:nth-child(5) {
   animation-delay: 0.3s;
+}
+
+.distance-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-panel-row);
+  border-radius: 12px;
+  border-left: 3px solid var(--accent-blue);
+  margin-bottom: 20px;
+}
+
+.distance-input-row .name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.distance-input-row input {
+  width: 80px;
+  text-align: center;
+  padding: 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .box-row:hover {

@@ -33,6 +33,7 @@ export default function ModifyPlan() {
         furniture: 1,
         industrial: 2
     });
+    const [distance, setDistance] = useState(10);
 
     const [status, setStatus] = useState('Ready');
     const [packedItems, setPackedItems] = useState([]);
@@ -57,6 +58,7 @@ export default function ModifyPlan() {
                 if (data.boxCounts) {
                     setBoxCounts(data.boxCounts);
                 }
+                setDistance(data.distance || 10);
                 // Pre-populate with existing packed items
                 if (data.items && data.items.length > 0) {
                     setPackedItems(data.items);
@@ -163,6 +165,7 @@ export default function ModifyPlan() {
             itemCount: packedItems.length,
             utilization,
             stability,
+            distance,
             status: 'submitted',
             cancelReason: null,
             cancelRequestedAt: null,
@@ -241,6 +244,7 @@ export default function ModifyPlan() {
                     itemCount={packedItems.length}
                     stability={stability}
                     utilization={utilization}
+                    distance={distance}
                     onViewReport={() => setShowReport(true)}
                     showReportButton={isComplete}
                 />
@@ -250,6 +254,8 @@ export default function ModifyPlan() {
                     onTruckChange={handleTruckChange}
                     boxCounts={boxCounts}
                     onBoxCountChange={handleBoxCountChange}
+                    distance={distance}
+                    onDistanceChange={setDistance}
                     onLoadCargo={handleLoadCargo}
                     onReset={handleReset}
                     disabled={isRunning}

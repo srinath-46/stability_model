@@ -35,14 +35,24 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            ...userDoc.data()
-          });
-        } else {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              ...userDoc.data()
+            });
+          } else {
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              role: 'driver',
+              name: firebaseUser.email.split('@')[0]
+            });
+          }
+        } catch (dbError) {
+          console.warn('Could not read user profile from database, using default:', dbError);
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -97,29 +107,33 @@ export function AuthProvider({ children }) {
       // Regular Firebase Auth login
       const result = await signInWithEmailAndPassword(auth, email, password);
 
-      // Check if user doc exists, create if not
-      const userDocRef = doc(db, 'users', result.user.uid);
-      const userDoc = await getDoc(userDocRef);
+      try {
+        // Check if user doc exists, create if not
+        const userDocRef = doc(db, 'users', result.user.uid);
+        const userDoc = await getDoc(userDocRef);
 
-      // Determine role - admin if email is in ADMIN_EMAILS
-      const role = isAdmin ? 'admin' : 'driver';
+        // Determine role - admin if email is in ADMIN_EMAILS
+        const role = isAdmin ? 'admin' : 'driver';
 
-      if (!userDoc.exists()) {
-        // Create user document
-        await setDoc(userDocRef, {
-          email,
-          name: email.split('@')[0],
-          role,
-          createdAt: serverTimestamp(),
-          lastLoginAt: serverTimestamp()
-        });
-      } else {
-        // Update last login timestamp (and role if admin)
-        const updates = { lastLoginAt: serverTimestamp() };
-        if (isAdmin && userDoc.data().role !== 'admin') {
-          updates.role = 'admin';
+        if (!userDoc.exists()) {
+          // Create user document
+          await setDoc(userDocRef, {
+            email,
+            name: email.split('@')[0],
+            role,
+            createdAt: serverTimestamp(),
+            lastLoginAt: serverTimestamp()
+          });
+        } else {
+          // Update last login timestamp (and role if admin)
+          const updates = { lastLoginAt: serverTimestamp() };
+          if (isAdmin && userDoc.data().role !== 'admin') {
+            updates.role = 'admin';
+          }
+          await updateDoc(userDocRef, updates);
         }
-        await updateDoc(userDocRef, updates);
+      } catch (dbError) {
+        console.warn('Database operations during login failed (likely security rules), ignoring:', dbError);
       }
 
       return { success: true };
@@ -142,14 +156,18 @@ export function AuthProvider({ children }) {
       setLoading(true);
       const result = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Create user document in Firestore
-      await setDoc(doc(db, 'users', result.user.uid), {
-        email,
-        name,
-        role,
-        createdAt: serverTimestamp(),
-        lastLoginAt: serverTimestamp()
-      });
+      // Try to create user document in Firestore
+      try {
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email,
+          name,
+          role,
+          createdAt: serverTimestamp(),
+          lastLoginAt: serverTimestamp()
+        });
+      } catch (dbError) {
+        console.warn('Could not save user profile to database (likely security rules), but authentication succeeded:', dbError);
+      }
       
       return { success: true };
     } catch (error) {

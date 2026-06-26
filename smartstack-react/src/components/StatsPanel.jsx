@@ -7,12 +7,14 @@ export default function StatsPanel({
   itemCount = 0,
   stability = 100,
   utilization = 0,
+  distance = null, // Added distance prop with default
   onViewReport,
   showReportButton = false,
   onAssign,
   showAssignButton = false,
   assignDisabled = false,
-  isAssigned = false
+  isAssigned = false,
+  payment = null
 }) {
   return (
     <div className="stats-panel">
@@ -37,8 +39,20 @@ export default function StatsPanel({
         </div>
         <div className="stat-row">
           <span><BarChart3 size={14} /> Space Used:</span>
-          <span className="stat-val">{utilization.toFixed(1)}%</span>
+          <span className="stat-val">{utilization?.toFixed(1)}%</span>
         </div>
+        {distance !== null && (
+          <div className="stat-row">
+            <span>Route Distance:</span>
+            <span className="stat-val">{distance} km</span>
+          </div>
+        )}
+        {payment && (
+          <div className="stat-row payment-row">
+            <span>Trip Earnings:</span>
+            <span className="stat-val earnings">₹{payment.amount?.toLocaleString()}</span>
+          </div>
+        )}
 
         <div className="legend">
           <span><span style={{ color: '#a855f7' }}>■</span> Electronics</span>

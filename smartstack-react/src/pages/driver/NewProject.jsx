@@ -29,6 +29,7 @@ export default function NewProject() {
     furniture: 1,
     industrial: 2
   });
+  const [distance, setDistance] = useState(10);
 
   const [status, setStatus] = useState('Ready');
   const [packedItems, setPackedItems] = useState([]);
@@ -136,7 +137,8 @@ export default function NewProject() {
       items: packedItems,
       itemCount: packedItems.length,
       utilization,
-      stability
+      stability,
+      distance
     };
 
     const result = await addProject(project);
@@ -184,6 +186,7 @@ export default function NewProject() {
           itemCount={packedItems.length}
           stability={stability}
           utilization={utilization}
+          distance={distance}
           onViewReport={() => setShowReport(true)}
           showReportButton={isComplete}
         />
@@ -193,6 +196,8 @@ export default function NewProject() {
           onTruckChange={handleTruckChange}
           boxCounts={boxCounts}
           onBoxCountChange={handleBoxCountChange}
+          distance={distance}
+          onDistanceChange={setDistance}
           onLoadCargo={handleLoadCargo}
           onReset={handleReset}
           disabled={isRunning}

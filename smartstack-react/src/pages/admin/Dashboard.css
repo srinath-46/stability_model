@@ -389,6 +389,27 @@
   height: 4px;
 }
 
+/* Payment / Earnings Badge */
+.payment-cell {
+  white-space: nowrap;
+}
+
+.earnings-badge {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05));
+  color: #fbbf24;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.not-set {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
 /* Admin responsive */
 @media (max-width: 768px) {
   .admin-stats {

@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Truck, Lock, Mail, Package, Sun, Moon, Shield } from 'lucide-react';
+import { Truck, Lock, Mail, Package, Sun, Moon, Shield, User } from 'lucide-react';
 import './Login.css';
 
 export default function Login() {
+  const [isRegister, setIsRegister] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -20,7 +22,12 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
+    let result;
+    if (isRegister) {
+      result = await register(email, password, name);
+    } else {
+      result = await login(email, password);
+    }
     
     if (result.success) {
       navigate('/driver/dashboard');
@@ -51,6 +58,19 @@ export default function Login() {
         </div>
         
         <form onSubmit={handleSubmit} className="login-form">
+          {isRegister && (
+            <div className="input-group">
+              <label><User size={14} /> Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+          )}
+
           <div className="input-group">
             <label><Mail size={14} /> Email</label>
             <input
@@ -76,8 +96,22 @@ export default function Login() {
           {error && <div className="error-message">{error}</div>}
           
           <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? 'Please wait...' : <><Lock size={16} /> Sign In</>}
+            {loading ? 'Please wait...' : <><Lock size={16} /> {isRegister ? 'Sign Up' : 'Sign In'}</>}
           </button>
+
+          <div className="register-note" style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
+            {isRegister ? "Already have an account? " : "Don't have an account? "}
+            <span 
+              className="toggle-mode" 
+              onClick={() => {
+                setIsRegister(!isRegister);
+                setError('');
+              }}
+              style={{ color: 'var(--accent-blue-light)', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              {isRegister ? 'Sign In' : 'Sign Up'}
+            </span>
+          </div>
         </form>
         
         <div className="admin-login-section">
