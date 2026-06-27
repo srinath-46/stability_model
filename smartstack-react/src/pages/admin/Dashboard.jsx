@@ -6,7 +6,7 @@ import { useDrivers } from '../../hooks/useDrivers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { 
   Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle,
-  ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin
+  ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin, Edit
 } from 'lucide-react';
 import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
@@ -20,6 +20,7 @@ export default function AdminDashboard() {
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
@@ -108,29 +109,6 @@ export default function AdminDashboard() {
   };
 
 
-  // Computed stats
-  const stats = useMemo(() => {
-    if (projects.length === 0) return null;
-    const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
-    const pending = projects.filter(p => !p.payment).length;
-    const uniqueDrivers = new Set(projects.map(p => p.driverName)).size;
-    return {
-      totalPlans: projects.length,
-      totalRevenue: revenue,
-      pendingReview: pending,
-      totalDrivers: uniqueDrivers
-    };
-  }, [projects]);
-
-  // Filtered projects
-  const filteredProjects = useMemo(() => {
-    return projects.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [projects, searchQuery, statusFilter]);
 
   if (loading) {
     return (
