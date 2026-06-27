@@ -1,0 +1,12 @@
+*.py
+*.npz
+*.csv
+requirements.txt
+training_data.npz
+training_priority.csv
+training_stability.csv
+node_modules/
+test_*.js
+test_*.html
+TODO.md
+README.md

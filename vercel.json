@@ -1,5 +1,15 @@
 {
-  "buildCommand": "cd smartstack-react && npm install && npm run build",
-  "outputDirectory": "smartstack-react/dist",
-  "installCommand": "cd smartstack-react && npm install"
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }
