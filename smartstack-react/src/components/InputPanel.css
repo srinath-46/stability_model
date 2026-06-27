@@ -347,3 +347,94 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+  .input-panel {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    border-radius: 0;
+    animation: none;
+    box-shadow: none;
+    border: none;
+    border-top: 1px solid var(--border-primary);
+    padding: 16px;
+  }
+
+  /* Show all 4 truck options in a row */
+  .truck-options {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .truck-option {
+    padding: 10px 6px;
+  }
+
+  .truck-option .name {
+    font-size: 0.7rem;
+  }
+
+  .truck-option .dims {
+    display: none;
+  }
+
+  .truck-option .price-label {
+    font-size: 0.7rem;
+  }
+
+  .box-row {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .box-row input {
+    width: 52px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .distance-input-row {
+    padding: 10px 12px;
+  }
+
+  .action-buttons {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .btn-run, .btn-reset {
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  .total-bar {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-panel {
+    padding: 12px;
+  }
+
+  .truck-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .truck-option {
+    padding: 12px 8px;
+  }
+
+  .truck-option .dims {
+    display: block;
+  }
+
+  .section-title {
+    font-size: 0.72rem;
+    margin: 18px 0 10px 0;
+  }
+}

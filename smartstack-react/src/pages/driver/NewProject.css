@@ -114,3 +114,87 @@
 .click-hint svg {
   color: var(--text-value);
 }
+
+@media (max-width: 1024px) {
+  .project-header {
+    padding: 12px 20px;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stack simulation: canvas on top, panels below */
+  .simulation-container {
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  /* Three.js canvas wrapper (first child) gets fixed height */
+  .simulation-container > div:first-child {
+    position: relative !important;
+    height: 50vh;
+    flex-shrink: 0;
+  }
+
+  .project-header {
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .project-name-input {
+    flex: 1 1 100%;
+    order: 3;
+    width: 100%;
+  }
+
+  .project-name-input input {
+    max-width: 100%;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+
+  .back-btn {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+
+  .submit-btn {
+    padding: 10px 20px;
+    font-size: 0.88rem;
+  }
+
+  .click-hint {
+    bottom: auto;
+    top: calc(50vh + 4px);
+    font-size: 0.78rem;
+    padding: 10px 16px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .simulation-container > div:first-child {
+    height: 42vh;
+  }
+
+  .project-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .back-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .submit-btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}

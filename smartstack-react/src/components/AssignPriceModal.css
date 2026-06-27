@@ -172,3 +172,36 @@
 .modal-footer .cancel-btn:hover {
     background: var(--bg-card-hover);
 }
+
+@media (max-width: 640px) {
+    .price-modal {
+        padding: 20px 16px;
+        border-radius: 16px;
+        margin: 12px;
+        max-width: calc(100% - 24px);
+    }
+
+    .price-modal .modal-header h3 {
+        font-size: 1rem;
+    }
+
+    .price-input-wrapper input {
+        font-size: 1.1rem;
+        padding: 12px 12px 12px 32px;
+    }
+
+    .calc-row, .calc-total {
+        font-size: 0.88rem;
+    }
+
+    .brief-item {
+        font-size: 0.86rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .price-modal {
+        padding: 16px 14px;
+        margin: 8px;
+    }
+}

@@ -212,3 +212,62 @@
 .cancel-dismiss-btn:hover {
   background: var(--bg-card-hover);
 }
+
+@media (max-width: 768px) {
+  .project-view-container {
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .project-view-container > div:first-child {
+    position: relative !important;
+    height: 50vh;
+    flex-shrink: 0;
+  }
+
+  .cancel-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 0.84rem;
+  }
+
+  .cancel-request-btn {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  .edit-plan-btn {
+    margin-left: 8px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+  }
+
+  .cancel-modal {
+    padding: 20px 16px;
+    max-width: 100%;
+    border-radius: 16px;
+    margin: 12px;
+  }
+
+  .cancel-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-confirm-btn,
+  .cancel-dismiss-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-view-container > div:first-child {
+    height: 42vh;
+  }
+}

@@ -445,3 +445,63 @@ input:focus::placeholder {
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-primary);
 }
+
+/* ===== Responsive Base ===== */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure touch targets are at least 44px */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent horizontal overflow on all pages */
+body {
+  overflow-x: hidden;
+}
+
+/* Mobile input font size fix (prevents iOS zoom) */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Small mobile (≤480px) */
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* Touch devices: disable hover transforms that cause layout shift */
+@media (hover: none) {
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* Safe area insets for notched phones (iPhone X+) */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.dashboard-header,
+.project-header {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
