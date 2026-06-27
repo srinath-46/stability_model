@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd smartstack-react && npm install && npm run build",
+  "outputDirectory": "smartstack-react/dist",
+  "installCommand": "cd smartstack-react && npm install"
+}
