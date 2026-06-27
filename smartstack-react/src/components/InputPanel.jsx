@@ -23,21 +23,9 @@ export default function InputPanel({
   truckKey,
   onTruckChange,
   boxCounts,
-<<<<<<< HEAD
-export default function InputPanel({
-  truckKey,
-  onTruckChange,
-  boxCounts,
   onBoxCountChange,
   distance,
   onDistanceChange,
-  distance,
-  onDistanceChange,
-=======
-  onBoxCountChange,
-  distance,
-  onDistanceChange,
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   onLoadCargo,
   onReset,
   disabled = false
@@ -51,10 +39,6 @@ export default function InputPanel({
     const newLimits = calculateMaxLimits(truck);
     setLimits(newLimits);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     Object.entries(boxCounts).forEach(([type, count]) => {
       if (count > newLimits[type]) {
         onBoxCountChange(type, newLimits[type]);
@@ -67,10 +51,6 @@ export default function InputPanel({
     const truckVolume = truck.w * truck.h * truck.d;
     const usableVolume = truckVolume * 0.55;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     let totalVolume = 0;
     Object.entries(boxCounts).forEach(([type, count]) => {
       const config = BOX_TYPES[type];
@@ -80,17 +60,9 @@ export default function InputPanel({
       }
     });
 
-<<<<<<< HEAD
-
     const usage = (totalVolume / usableVolume) * 100;
     setCapacityUsage(Math.min(100, usage));
 
-
-=======
-    const usage = (totalVolume / usableVolume) * 100;
-    setCapacityUsage(Math.min(100, usage));
-
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     if (totalVolume > usableVolume) {
       setWarning('Too many boxes! Reduce quantity or select larger truck.');
     } else {
@@ -104,18 +76,10 @@ export default function InputPanel({
     <div className="input-panel">
       <h2><Package size={18} /> Shipment Configuration</h2>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       <div className="section-title"><Truck size={14} /> Select Truck Size</div>
       <div className="truck-options">
         {Object.entries(TRUCKS).map(([key, truck]) => (
           <div
-<<<<<<< HEAD
-          <div
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
             key={key}
             className={`truck-option ${truckKey === key ? 'selected' : ''}`}
             onClick={() => !disabled && onTruckChange(key)}
@@ -124,18 +88,10 @@ export default function InputPanel({
             <div className="name">{truck.name}</div>
             <div className="dims">{truck.w}×{truck.h}×{truck.d}</div>
             <div className="price-label">Base: ₹{truck.basePrice.toLocaleString()}</div>
-<<<<<<< HEAD
-            <div className="price-label">Base: ₹{truck.basePrice.toLocaleString()}</div>
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
           </div>
         ))}
       </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       <div className="section-title"><Box size={14} /> Package Quantities</div>
       <div className="box-inputs">
         {Object.entries(BOX_TYPES).map(([type, config]) => {
@@ -168,11 +124,7 @@ export default function InputPanel({
 
       <div className="section-title"><Rocket size={14} /> Trip Logistics</div>
       <div className="distance-input-row">
-<<<<<<< HEAD
-        <div className="name">Total Distance (km)</div>
-=======
         <div className="name">Est. Route Distance (km)</div>
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
         <input
           type="number"
           value={distance}
@@ -193,28 +145,15 @@ export default function InputPanel({
         </div>
       </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       {warning && (
         <div className="capacity-warning">
           <AlertTriangle size={14} /> {warning}
         </div>
       )}
 
-<<<<<<< HEAD
-
       <div className="action-buttons">
         <button
           className="btn-run"
-        <button
-          className="btn-run"
-=======
-      <div className="action-buttons">
-        <button
-          className="btn-run"
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
           onClick={onLoadCargo}
           disabled={disabled || warning || totalItems === 0}
         >

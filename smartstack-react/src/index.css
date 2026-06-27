@@ -12,15 +12,6 @@
   padding: 0;
 }
 
-<<<<<<< HEAD
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import './pages/driver/Dashboard.css';
-@import './pages/admin/Dashboard.css';
-@import './pages/admin/ModifyPlan.css';
-@import './pages/admin/ManageDrivers.css';
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 /* ===== Theme Variables ===== */
 :root {
   /* Dark Theme (Default) */

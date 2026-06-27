@@ -15,16 +15,11 @@ import { ArrowLeft, Check, MousePointer, Loader, Save } from 'lucide-react';
 import './NewProject.css';
 
 export default function NewProject() {
-<<<<<<< HEAD
-  const { user } = useAuth();
-  const { addProject } = useProjects();
-=======
   const { id } = useParams();
   const isEditing = !!id;
   
   const { user } = useAuth();
   const { addProject, getProject, updateProject } = useProjects();
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -46,11 +41,7 @@ export default function NewProject() {
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-<<<<<<< HEAD
-
-=======
   const [isLoadingProject, setIsLoadingProject] = useState(isEditing);
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const [selectedBox, setSelectedBox] = useState(null);
   const [tooltipPos, setTooltipPos] = useState(null);
   const [showReport, setShowReport] = useState(false);
@@ -160,12 +151,7 @@ export default function NewProject() {
 
   const handleSubmitPlan = async () => {
     setIsSubmitting(true);
-<<<<<<< HEAD
-
-    const project = {
-=======
     const projectData = {
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       name: projectName,
       driverUid: user.uid,
       driverName: user.name,
@@ -176,13 +162,6 @@ export default function NewProject() {
       itemCount: packedItems.length,
       utilization,
       stability,
-<<<<<<< HEAD
-      distance
-    };
-
-    const result = await addProject(project);
-
-=======
       status: 'submitted', // Reset status to submitted upon modification
       distance
     };
@@ -193,7 +172,6 @@ export default function NewProject() {
     } else {
       result = await addProject(projectData);
     }
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     if (result.success) {
       navigate('/driver/dashboard');
     } else {

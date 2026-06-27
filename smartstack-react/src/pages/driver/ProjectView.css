@@ -43,8 +43,6 @@
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
 
-<<<<<<< HEAD
-=======
 .edit-plan-btn {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
   border: 1px solid rgba(59, 130, 246, 0.3);
@@ -67,7 +65,6 @@
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
 }
 
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 /* Cancel Request Button in header */
 .cancel-request-btn {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
@@ -214,8 +211,4 @@
 
 .cancel-dismiss-btn:hover {
   background: var(--bg-card-hover);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247

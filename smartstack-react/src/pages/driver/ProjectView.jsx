@@ -7,11 +7,7 @@ import TruckViewer from '../../components/TruckViewer';
 import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
-<<<<<<< HEAD
-import { ArrowLeft, User, LogOut, MousePointer, Loader, XCircle, AlertTriangle, X } from 'lucide-react';
-=======
 import { ArrowLeft, User, LogOut, MousePointer, Loader, Edit, XCircle, AlertTriangle, X } from 'lucide-react';
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 import './ProjectView.css';
 
 export default function ProjectView() {
@@ -108,8 +104,6 @@ export default function ProjectView() {
               {project.status === 'cancel_requested' ? 'Cancel Pending' : project.status === 'cancelled' ? 'Cancelled' : project.status}
             </span>
           )}
-<<<<<<< HEAD
-=======
           <button 
             className="edit-plan-btn" 
             onClick={() => navigate(`/driver/edit-project/${id}`)}
@@ -117,7 +111,6 @@ export default function ProjectView() {
           >
             <Edit size={16} /> Edit Plan
           </button>
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
         </div>
         <div className="header-right">
           {project.status === 'assigned' && (

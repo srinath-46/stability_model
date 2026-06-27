@@ -8,21 +8,13 @@ import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
 import AssignPriceModal from '../../components/AssignPriceModal';
-<<<<<<< HEAD
-import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
-=======
 import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 import './PlanView.css';
 
 export default function PlanView() {
   const { id } = useParams();
   const { user, logout } = useAuth();
-<<<<<<< HEAD
-  const { getProject, updateProject } = useProjects();
-=======
   const { getProject, deleteProject, updateProject } = useProjects();
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -117,8 +109,6 @@ export default function PlanView() {
       toast.error('Failed to reject cancellation');
     }
     setProcessingCancel(false);
-<<<<<<< HEAD
-=======
   };
 
   const handleDelete = async () => {
@@ -130,7 +120,6 @@ export default function PlanView() {
         alert('Error deleting project: ' + result.error);
       }
     }
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   };
 
   if (loading) {

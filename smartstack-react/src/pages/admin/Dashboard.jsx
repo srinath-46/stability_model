@@ -2,17 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
-<<<<<<< HEAD
-import { useEffect, useState, useMemo } from 'react';
-import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
-=======
 import { useDrivers } from '../../hooks/useDrivers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { 
   Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle,
   ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin
 } from 'lucide-react';
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
 
@@ -29,11 +24,6 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
   const [showPriceModal, setShowPriceModal] = useState(false);
-<<<<<<< HEAD
-  const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
-  const [showPriceModal, setShowPriceModal] = useState(false);
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 
   const loadProjects = useCallback(async () => {
     const data = await getAllProjects();
@@ -75,41 +65,11 @@ export default function AdminDashboard() {
   };
 
 
-<<<<<<< HEAD
-    if (newDriver.password.length < 6) {
-      setAddError('Password must be at least 6 characters');
-      setAddingDriver(false);
-      return;
-    }
-
-    const result = await register(newDriver.email, newDriver.password, newDriver.name, 'driver');
-
-    if (result.success) {
-      setAddSuccess(`Driver "${newDriver.name}" added successfully!`);
-      setNewDriver({ name: '', email: '', password: '' });
-      setTimeout(() => {
-        setShowAddDriver(false);
-        setAddSuccess('');
-      }, 2000);
-    } else {
-      setAddError(result.error);
-    }
-
-    setAddingDriver(false);
-  };
-
   const handleAssignDriver = (project) => {
     setSelectedProjectForAssign(project);
     setShowPriceModal(true);
   };
 
-=======
-  const handleAssignDriver = (project) => {
-    setSelectedProjectForAssign(project);
-    setShowPriceModal(true);
-  };
-
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const handleConfirmAssignment = async (amount) => {
     if (!selectedProjectForAssign) return;
 
@@ -121,29 +81,11 @@ export default function AdminDashboard() {
         currency: 'INR',
         status: 'pending'
       }
-<<<<<<< HEAD
-      assignedAt: new Date().toISOString(),
-      payment: {
-        amount,
-        currency: 'INR',
-        status: 'pending'
-      }
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     });
 
     if (result.success) {
       setShowPriceModal(false);
       setSelectedProjectForAssign(null);
-<<<<<<< HEAD
-      loadProjects();
-    }
-
-    if (result.success) {
-      setShowPriceModal(false);
-      setSelectedProjectForAssign(null);
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       loadProjects();
     }
   };
@@ -167,32 +109,6 @@ export default function AdminDashboard() {
 
 
 
-  // Computed stats
-  const stats = useMemo(() => {
-    if (projects.length === 0) return null;
-    const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
-    const pending = projects.filter(p => !p.payment).length;
-    const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
-    const pending = projects.filter(p => !p.payment).length;
-    const uniqueDrivers = new Set(projects.map(p => p.driverName)).size;
-    return {
-      totalPlans: projects.length,
-      totalRevenue: revenue,
-      totalRevenue: revenue,
-      pendingReview: pending,
-      totalDrivers: uniqueDrivers
-    };
-  }, [projects]);
-
-  // Filtered projects
-  const filteredProjects = useMemo(() => {
-    return projects.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [projects, searchQuery, statusFilter]);
 
   if (loading) {
     return (
@@ -240,19 +156,9 @@ export default function AdminDashboard() {
             </div>
             <div className="summary-card revenue-card">
               <div className="summary-icon"><IndianRupee size={20} /></div>
-<<<<<<< HEAD
-            <div className="summary-card revenue-card">
-              <div className="summary-icon"><IndianRupee size={20} /></div>
               <div className="summary-data">
                 <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
                 <span className="summary-label">Fleet Revenue</span>
-                <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
-                <span className="summary-label">Fleet Revenue</span>
-=======
-              <div className="summary-data">
-                <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
-                <span className="summary-label">Fleet Revenue</span>
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
               </div>
             </div>
             <div className="summary-card">
@@ -260,10 +166,6 @@ export default function AdminDashboard() {
               <div className="summary-data">
                 <span className="summary-value">{stats.pendingReview}</span>
                 <span className="summary-label">Pending Price</span>
-<<<<<<< HEAD
-                <span className="summary-label">Pending Price</span>
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
               </div>
             </div>
             <div className="summary-card clickable" onClick={() => navigate('/admin/drivers')}>
@@ -278,10 +180,6 @@ export default function AdminDashboard() {
         )}
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
         {/* Search & Filter */}
         {projects.length > 0 && (
           <div className="search-filter-bar">
@@ -339,10 +237,6 @@ export default function AdminDashboard() {
                   <th>Dist.</th>
                   <th>Utilization</th>
                   <th>Payment</th>
-<<<<<<< HEAD
-                  <th>Payment</th>
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -379,16 +273,6 @@ export default function AdminDashboard() {
                       ) : (
                         <span className="not-set">-</span>
                       )}
-<<<<<<< HEAD
-                    </td>
-                    <td className="payment-cell">
-                      {project.status === 'assigned' || project.status === 'cancel_requested' || project.status === 'cancelled' ? (
-                        <span className="earnings-badge">₹{project.payment?.amount?.toLocaleString()}</span>
-                      ) : (
-                        <span className="not-set">-</span>
-                      )}
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                     </td>
                     <td>
                       <span className={`status-badge ${project.status}`}>
@@ -406,10 +290,6 @@ export default function AdminDashboard() {
                         <button
                           className="assign-btn"
                           onClick={() => handleAssignDriver(project)}
-<<<<<<< HEAD
-                          onClick={() => handleAssignDriver(project)}
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                         >
                           <CheckCircle size={14} /> Assign
                         </button>
@@ -447,65 +327,6 @@ export default function AdminDashboard() {
         )}
       </main>
 
-<<<<<<< HEAD
-      {/* Add Driver Modal */}
-      {showAddDriver && (
-        <div className="modal-overlay" onClick={() => setShowAddDriver(false)}>
-          <div className="add-driver-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3><UserPlus size={20} /> Add New Driver</h3>
-              <button className="close-btn" onClick={() => setShowAddDriver(false)}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddDriver} className="add-driver-form">
-              <div className="form-group">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  value={newDriver.name}
-                  onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
-                  placeholder="Enter driver's name"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={newDriver.email}
-                  onChange={(e) => setNewDriver({ ...newDriver, email: e.target.value })}
-                  placeholder="Enter driver's email"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={newDriver.password}
-                  onChange={(e) => setNewDriver({ ...newDriver, password: e.target.value })}
-                  placeholder="Min 6 characters"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              {addError && <div className="error-msg">{addError}</div>}
-              {addSuccess && <div className="success-msg">{addSuccess}</div>}
-
-              <button type="submit" className="submit-driver-btn" disabled={addingDriver}>
-                {addingDriver ? 'Adding...' : <><UserPlus size={16} /> Add Driver</>}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-=======
->>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 
       <AssignPriceModal
         project={selectedProjectForAssign}
