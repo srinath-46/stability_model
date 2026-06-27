@@ -2,15 +2,25 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useProjects } from '../../hooks/useProjects';
+<<<<<<< HEAD
 import { useEffect, useState, useMemo } from 'react';
 import { Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle, Search, Filter, Activity, TrendingUp, ClipboardList, Clock, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
+=======
+import { useDrivers } from '../../hooks/useDrivers';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { 
+  Truck, User, LogOut, BarChart3, Eye, Package, Inbox, Loader, Sun, Moon, UserPlus, X, CheckCircle,
+  ClipboardList, IndianRupee, Clock, ArrowLeft, Search, Filter, Activity, AlertTriangle, XCircle, MapPin
+} from 'lucide-react';
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 import AssignPriceModal from '../../components/AssignPriceModal';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
   const { user, logout, register } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { getAllProjects, updateProject } = useProjects();
+  const { getAllProjects, updateProject, deleteProject } = useProjects();
+  const { drivers, getAllDrivers } = useDrivers();
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
@@ -19,30 +29,53 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
   const [showPriceModal, setShowPriceModal] = useState(false);
+<<<<<<< HEAD
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
   const [showPriceModal, setShowPriceModal] = useState(false);
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     const data = await getAllProjects();
     setProjects(data);
+    await getAllDrivers();
     setLoading(false);
-  };
+  }, [getAllProjects, getAllDrivers]);
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [loadProjects]);
+
+  const stats = useMemo(() => {
+    return {
+      totalPlans: projects.length,
+      totalRevenue: projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0),
+      pendingReview: projects.filter(p => p.status === 'submitted').length,
+      totalDrivers: drivers.length
+    };
+  }, [projects, drivers]);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesSearch = 
+        project.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.driverName?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilter = 
+        statusFilter === 'all' || 
+        project.status === statusFilter;
+      
+      return matchesSearch && matchesFilter;
+    });
+  }, [projects, searchQuery, statusFilter]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
 
-  const handleAddDriver = async (e) => {
-    e.preventDefault();
-    setAddError('');
-    setAddSuccess('');
-    setAddingDriver(true);
 
+<<<<<<< HEAD
     if (newDriver.password.length < 6) {
       setAddError('Password must be at least 6 characters');
       setAddingDriver(false);
@@ -70,6 +103,13 @@ export default function AdminDashboard() {
     setShowPriceModal(true);
   };
 
+=======
+  const handleAssignDriver = (project) => {
+    setSelectedProjectForAssign(project);
+    setShowPriceModal(true);
+  };
+
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const handleConfirmAssignment = async (amount) => {
     if (!selectedProjectForAssign) return;
 
@@ -81,23 +121,29 @@ export default function AdminDashboard() {
         currency: 'INR',
         status: 'pending'
       }
+<<<<<<< HEAD
       assignedAt: new Date().toISOString(),
       payment: {
         amount,
         currency: 'INR',
         status: 'pending'
       }
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
     });
 
     if (result.success) {
       setShowPriceModal(false);
       setSelectedProjectForAssign(null);
+<<<<<<< HEAD
       loadProjects();
     }
 
     if (result.success) {
       setShowPriceModal(false);
       setSelectedProjectForAssign(null);
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
       loadProjects();
     }
   };
@@ -194,6 +240,7 @@ export default function AdminDashboard() {
             </div>
             <div className="summary-card revenue-card">
               <div className="summary-icon"><IndianRupee size={20} /></div>
+<<<<<<< HEAD
             <div className="summary-card revenue-card">
               <div className="summary-icon"><IndianRupee size={20} /></div>
               <div className="summary-data">
@@ -201,6 +248,11 @@ export default function AdminDashboard() {
                 <span className="summary-label">Fleet Revenue</span>
                 <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
                 <span className="summary-label">Fleet Revenue</span>
+=======
+              <div className="summary-data">
+                <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
+                <span className="summary-label">Fleet Revenue</span>
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
               </div>
             </div>
             <div className="summary-card">
@@ -208,7 +260,10 @@ export default function AdminDashboard() {
               <div className="summary-data">
                 <span className="summary-value">{stats.pendingReview}</span>
                 <span className="summary-label">Pending Price</span>
+<<<<<<< HEAD
                 <span className="summary-label">Pending Price</span>
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
               </div>
             </div>
             <div className="summary-card clickable" onClick={() => navigate('/admin/drivers')}>
@@ -223,7 +278,10 @@ export default function AdminDashboard() {
         )}
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
         {/* Search & Filter */}
         {projects.length > 0 && (
           <div className="search-filter-bar">
@@ -281,7 +339,10 @@ export default function AdminDashboard() {
                   <th>Dist.</th>
                   <th>Utilization</th>
                   <th>Payment</th>
+<<<<<<< HEAD
                   <th>Payment</th>
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -318,6 +379,7 @@ export default function AdminDashboard() {
                       ) : (
                         <span className="not-set">-</span>
                       )}
+<<<<<<< HEAD
                     </td>
                     <td className="payment-cell">
                       {project.status === 'assigned' || project.status === 'cancel_requested' || project.status === 'cancelled' ? (
@@ -325,6 +387,8 @@ export default function AdminDashboard() {
                       ) : (
                         <span className="not-set">-</span>
                       )}
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                     </td>
                     <td>
                       <span className={`status-badge ${project.status}`}>
@@ -342,7 +406,10 @@ export default function AdminDashboard() {
                         <button
                           className="assign-btn"
                           onClick={() => handleAssignDriver(project)}
+<<<<<<< HEAD
                           onClick={() => handleAssignDriver(project)}
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
                         >
                           <CheckCircle size={14} /> Assign
                         </button>
@@ -380,6 +447,7 @@ export default function AdminDashboard() {
         )}
       </main>
 
+<<<<<<< HEAD
       {/* Add Driver Modal */}
       {showAddDriver && (
         <div className="modal-overlay" onClick={() => setShowAddDriver(false)}>
@@ -436,6 +504,8 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+=======
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 
       <AssignPriceModal
         project={selectedProjectForAssign}

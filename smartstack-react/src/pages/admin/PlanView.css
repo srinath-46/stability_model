@@ -53,6 +53,32 @@
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
 
+<<<<<<< HEAD
+=======
+.delete-plan-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  transition: all 0.3s;
+}
+
+.delete-plan-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15));
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 /* Cancel Banner (Admin) */
 .cancel-banner-admin {
   display: flex;
@@ -152,4 +178,8 @@
 .modify-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247

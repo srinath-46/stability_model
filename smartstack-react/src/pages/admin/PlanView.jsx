@@ -8,13 +8,21 @@ import StatsPanel from '../../components/StatsPanel';
 import BoxTooltip from '../../components/BoxTooltip';
 import ReportModal from '../../components/ReportModal';
 import AssignPriceModal from '../../components/AssignPriceModal';
+<<<<<<< HEAD
 import { ArrowLeft, User, LogOut, MousePointer, Loader, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
+=======
+import { ArrowLeft, User, LogOut, MousePointer, Loader, Trash2, CheckCircle, XCircle, AlertTriangle, Edit, IndianRupee } from 'lucide-react';
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
 import './PlanView.css';
 
 export default function PlanView() {
   const { id } = useParams();
   const { user, logout } = useAuth();
+<<<<<<< HEAD
   const { getProject, updateProject } = useProjects();
+=======
+  const { getProject, deleteProject, updateProject } = useProjects();
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -34,7 +42,7 @@ export default function PlanView() {
       setLoading(false);
     };
     loadProject();
-  }, [id]);
+  }, [id, getProject]);
 
   const handleLogout = async () => {
     await logout();
@@ -109,6 +117,20 @@ export default function PlanView() {
       toast.error('Failed to reject cancellation');
     }
     setProcessingCancel(false);
+<<<<<<< HEAD
+=======
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) {
+      const result = await deleteProject(id);
+      if (result.success) {
+        navigate('/admin/dashboard');
+      } else {
+        alert('Error deleting project: ' + result.error);
+      }
+    }
+>>>>>>> fbd8a42d4931724e17fa2ebcfb2fc40e48c67247
   };
 
   if (loading) {
@@ -142,6 +164,9 @@ export default function PlanView() {
           </button>
           <h1>{project.name}</h1>
           <span className="driver-tag">by {project.driverName}</span>
+          <button className="delete-plan-btn" onClick={handleDelete} title="Delete Plan">
+            <Trash2 size={16} /> Delete Plan
+          </button>
         </div>
         <div className="header-right">
           {project.status === 'submitted' && (
