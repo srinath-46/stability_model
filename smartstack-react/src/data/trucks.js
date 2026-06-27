@@ -1,4 +1,5 @@
 // Truck configurations and pricing factors
+// Truck configurations and pricing factors
 export const TRUCKS = {
   small: { name: 'Small Van', w: 60, h: 50, d: 40, color: '#22c55e', scale: 0.6, basePrice: 3000, bonusPrice: 1200, perKmRate: 15 },
   medium: { name: 'Medium Truck', w: 100, h: 70, d: 55, color: '#3b82f6', scale: 0.85, basePrice: 6000, bonusPrice: 2500, perKmRate: 22 },

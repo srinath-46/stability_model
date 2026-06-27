@@ -345,6 +345,28 @@
   cursor: not-allowed;
 }
 
+/* Card Action Hint (Manage ->) */
+.card-action-hint {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-blue-light);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.summary-card.clickable:hover .card-action-hint {
+  opacity: 1;
+  transform: translateX(3px);
+  background: rgba(59, 130, 246, 0.2);
+}
+
 /* Admin 4-column stats grid */
 .admin-stats {
   grid-template-columns: repeat(4, 1fr);

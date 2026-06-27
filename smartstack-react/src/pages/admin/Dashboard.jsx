@@ -15,13 +15,10 @@ export default function AdminDashboard() {
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddDriver, setShowAddDriver] = useState(false);
-  const [newDriver, setNewDriver] = useState({ name: '', email: '', password: '' });
-  const [addingDriver, setAddingDriver] = useState(false);
-  const [addError, setAddError] = useState('');
-  const [addSuccess, setAddSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
+  const [showPriceModal, setShowPriceModal] = useState(false);
   const [selectedProjectForAssign, setSelectedProjectForAssign] = useState(null);
   const [showPriceModal, setShowPriceModal] = useState(false);
 
@@ -84,7 +81,19 @@ export default function AdminDashboard() {
         currency: 'INR',
         status: 'pending'
       }
+      assignedAt: new Date().toISOString(),
+      payment: {
+        amount,
+        currency: 'INR',
+        status: 'pending'
+      }
     });
+
+    if (result.success) {
+      setShowPriceModal(false);
+      setSelectedProjectForAssign(null);
+      loadProjects();
+    }
 
     if (result.success) {
       setShowPriceModal(false);
@@ -111,14 +120,18 @@ export default function AdminDashboard() {
   };
 
 
+
   // Computed stats
   const stats = useMemo(() => {
     if (projects.length === 0) return null;
     const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
     const pending = projects.filter(p => !p.payment).length;
+    const revenue = projects.reduce((acc, p) => acc + (p.payment?.amount || 0), 0);
+    const pending = projects.filter(p => !p.payment).length;
     const uniqueDrivers = new Set(projects.map(p => p.driverName)).size;
     return {
       totalPlans: projects.length,
+      totalRevenue: revenue,
       totalRevenue: revenue,
       pendingReview: pending,
       totalDrivers: uniqueDrivers
@@ -153,9 +166,6 @@ export default function AdminDashboard() {
           <span className="admin-badge">ADMIN</span>
         </div>
         <div className="header-right">
-          <button className="add-driver-btn" onClick={() => setShowAddDriver(true)}>
-            <UserPlus size={16} /> Add Driver
-          </button>
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -184,7 +194,11 @@ export default function AdminDashboard() {
             </div>
             <div className="summary-card revenue-card">
               <div className="summary-icon"><IndianRupee size={20} /></div>
+            <div className="summary-card revenue-card">
+              <div className="summary-icon"><IndianRupee size={20} /></div>
               <div className="summary-data">
+                <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
+                <span className="summary-label">Fleet Revenue</span>
                 <span className="summary-value">₹{stats.totalRevenue.toLocaleString()}</span>
                 <span className="summary-label">Fleet Revenue</span>
               </div>
@@ -194,17 +208,20 @@ export default function AdminDashboard() {
               <div className="summary-data">
                 <span className="summary-value">{stats.pendingReview}</span>
                 <span className="summary-label">Pending Price</span>
+                <span className="summary-label">Pending Price</span>
               </div>
             </div>
-            <div className="summary-card">
+            <div className="summary-card clickable" onClick={() => navigate('/admin/drivers')}>
               <div className="summary-icon"><User size={20} /></div>
               <div className="summary-data">
                 <span className="summary-value">{stats.totalDrivers}</span>
                 <span className="summary-label">Drivers</span>
               </div>
+              <div className="card-action-hint">Manage <ArrowLeft size={12} style={{ transform: 'rotate(180deg)' }} /></div>
             </div>
           </div>
         )}
+
 
 
         {/* Search & Filter */}
@@ -261,7 +278,9 @@ export default function AdminDashboard() {
                   <th>Driver</th>
                   <th>Truck</th>
                   <th>Items</th>
+                  <th>Dist.</th>
                   <th>Utilization</th>
+                  <th>Payment</th>
                   <th>Payment</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -279,6 +298,7 @@ export default function AdminDashboard() {
                     </td>
                     <td><Truck size={14} /> {project.truckName}</td>
                     <td><Package size={14} /> {project.itemCount}</td>
+                    <td><MapPin size={14} /> {project.distance || 0} km</td>
                     <td>
                       <div className="table-util-cell">
                         <span className="utilization-badge">
@@ -291,6 +311,13 @@ export default function AdminDashboard() {
                           />
                         </div>
                       </div>
+                    </td>
+                    <td className="payment-cell">
+                      {project.status === 'assigned' || project.status === 'cancel_requested' || project.status === 'cancelled' ? (
+                        <span className="earnings-badge">₹{project.payment?.amount?.toLocaleString()}</span>
+                      ) : (
+                        <span className="not-set">-</span>
+                      )}
                     </td>
                     <td className="payment-cell">
                       {project.status === 'assigned' || project.status === 'cancel_requested' || project.status === 'cancelled' ? (
@@ -314,6 +341,7 @@ export default function AdminDashboard() {
                       {project.status === 'submitted' && (
                         <button
                           className="assign-btn"
+                          onClick={() => handleAssignDriver(project)}
                           onClick={() => handleAssignDriver(project)}
                         >
                           <CheckCircle size={14} /> Assign

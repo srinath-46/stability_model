@@ -11,6 +11,7 @@ import ProjectView from './pages/driver/ProjectView';
 import AdminDashboard from './pages/admin/Dashboard';
 import PlanView from './pages/admin/PlanView';
 import ModifyPlan from './pages/admin/ModifyPlan';
+import ManageDrivers from './pages/admin/ManageDrivers';
 
 // Protected Route component
 function ProtectedRoute({ children, allowedRoles }) {
@@ -76,6 +77,11 @@ function AppRoutes() {
       <Route path="/admin/modify/:id" element={
         <ProtectedRoute allowedRoles={['admin']}>
           <ModifyPlan />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/drivers" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <ManageDrivers />
         </ProtectedRoute>
       } />
 

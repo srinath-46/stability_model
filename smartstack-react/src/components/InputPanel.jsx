@@ -23,7 +23,13 @@ export default function InputPanel({
   truckKey,
   onTruckChange,
   boxCounts,
+export default function InputPanel({
+  truckKey,
+  onTruckChange,
+  boxCounts,
   onBoxCountChange,
+  distance,
+  onDistanceChange,
   distance,
   onDistanceChange,
   onLoadCargo,
@@ -39,6 +45,7 @@ export default function InputPanel({
     const newLimits = calculateMaxLimits(truck);
     setLimits(newLimits);
 
+
     Object.entries(boxCounts).forEach(([type, count]) => {
       if (count > newLimits[type]) {
         onBoxCountChange(type, newLimits[type]);
@@ -51,6 +58,7 @@ export default function InputPanel({
     const truckVolume = truck.w * truck.h * truck.d;
     const usableVolume = truckVolume * 0.55;
 
+
     let totalVolume = 0;
     Object.entries(boxCounts).forEach(([type, count]) => {
       const config = BOX_TYPES[type];
@@ -60,8 +68,10 @@ export default function InputPanel({
       }
     });
 
+
     const usage = (totalVolume / usableVolume) * 100;
     setCapacityUsage(Math.min(100, usage));
+
 
     if (totalVolume > usableVolume) {
       setWarning('Too many boxes! Reduce quantity or select larger truck.');
@@ -76,9 +86,11 @@ export default function InputPanel({
     <div className="input-panel">
       <h2><Package size={18} /> Shipment Configuration</h2>
 
+
       <div className="section-title"><Truck size={14} /> Select Truck Size</div>
       <div className="truck-options">
         {Object.entries(TRUCKS).map(([key, truck]) => (
+          <div
           <div
             key={key}
             className={`truck-option ${truckKey === key ? 'selected' : ''}`}
@@ -88,9 +100,11 @@ export default function InputPanel({
             <div className="name">{truck.name}</div>
             <div className="dims">{truck.w}×{truck.h}×{truck.d}</div>
             <div className="price-label">Base: ₹{truck.basePrice.toLocaleString()}</div>
+            <div className="price-label">Base: ₹{truck.basePrice.toLocaleString()}</div>
           </div>
         ))}
       </div>
+
 
       <div className="section-title"><Box size={14} /> Package Quantities</div>
       <div className="box-inputs">
@@ -145,13 +159,17 @@ export default function InputPanel({
         </div>
       </div>
 
+
       {warning && (
         <div className="capacity-warning">
           <AlertTriangle size={14} /> {warning}
         </div>
       )}
 
+
       <div className="action-buttons">
+        <button
+          className="btn-run"
         <button
           className="btn-run"
           onClick={onLoadCargo}
