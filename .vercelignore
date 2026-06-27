@@ -1,12 +1,19 @@
+# Python training scripts - exclude to prevent Python runtime detection
 *.py
+requirements.txt
 *.npz
 *.csv
-requirements.txt
-training_data.npz
-training_priority.csv
-training_stability.csv
-node_modules/
+
+# Root-level JS (not part of the React app)
+simulation.js
+mlAssistedStabilityPredictor-tfjs.js
+mlp_model.js
 test_*.js
 test_*.html
+
+# Docs and misc
 TODO.md
 README.md
+
+# Node modules (never deploy)
+node_modules/
