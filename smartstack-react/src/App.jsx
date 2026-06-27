@@ -12,6 +12,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import PlanView from './pages/admin/PlanView';
 import ModifyPlan from './pages/admin/ModifyPlan';
 import ManageDrivers from './pages/admin/ManageDrivers';
+import CityDrive from './pages/CityDrive';
 
 // Protected Route component
 function ProtectedRoute({ children, allowedRoles }) {
@@ -86,6 +87,13 @@ function AppRoutes() {
       <Route path="/admin/drivers" element={
         <ProtectedRoute allowedRoles={['admin']}>
           <ManageDrivers />
+        </ProtectedRoute>
+      } />
+
+      {/* City Drive – accessible to any logged-in user */}
+      <Route path="/city-drive" element={
+        <ProtectedRoute allowedRoles={['driver','admin']}>
+          <CityDrive />
         </ProtectedRoute>
       } />
 

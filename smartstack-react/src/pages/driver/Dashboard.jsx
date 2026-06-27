@@ -75,6 +75,9 @@ export default function DriverDashboard() {
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          <button className="city-drive-btn" onClick={() => navigate('/city-drive')} title="City Drive">
+            🚛 City Drive
+          </button>
           <span className="user-info"><User size={16} /> {user?.name} (Driver)</span>
           <button className="logout-btn" onClick={handleLogout}>
             <LogOut size={16} /> Logout

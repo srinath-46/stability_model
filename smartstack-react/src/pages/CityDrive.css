@@ -1,0 +1,238 @@
+/* ─── City Drive Page ─── */
+.cd-page {
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #87ceeb;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* ─── Header ─── */
+.cd-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.cd-back {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+  min-height: 40px;
+  white-space: nowrap;
+}
+.cd-back:hover { background: rgba(255,255,255,0.22); }
+
+.cd-title {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.3px;
+}
+
+.cd-hint {
+  margin-left: auto;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+/* ─── Canvas ─── */
+.cd-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ─── Speed HUD ─── */
+.cd-hud {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.cd-speedo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 10px 18px 6px;
+  min-width: 72px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.cd-speed-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fde68a;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+
+.cd-speed-unit {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+/* ─── D-Pad ─── */
+.cd-controls {
+  position: fixed;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  right: max(24px, env(safe-area-inset-right));
+  z-index: 100;
+  pointer-events: none;
+}
+
+.cd-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 62px);
+  grid-template-rows: repeat(3, 62px);
+  gap: 5px;
+  pointer-events: all;
+}
+
+.dp-btn {
+  background: rgba(0, 0, 0, 0.58);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: 1.3rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s, box-shadow 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  min-width: 62px;
+  min-height: 62px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+}
+
+.dp-btn:active {
+  background: rgba(59, 130, 246, 0.72);
+  border-color: rgba(147, 197, 253, 0.6);
+  transform: scale(0.91);
+  box-shadow: 0 2px 8px rgba(59,130,246,0.4);
+}
+
+.dp-center {
+  min-width: 62px;
+  min-height: 62px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Grid placement */
+.dp-up    { grid-column: 2; grid-row: 1; }
+.dp-left  { grid-column: 1; grid-row: 2; }
+.dp-center{ grid-column: 2; grid-row: 2; }
+.dp-right { grid-column: 3; grid-row: 2; }
+.dp-down  { grid-column: 2; grid-row: 3; }
+
+/* ─── Mobile ─── */
+@media (max-width: 640px) {
+  .cd-hint { display: none; }
+
+  .cd-header {
+    padding: 8px 14px;
+    gap: 12px;
+  }
+
+  .cd-title { font-size: 1rem; }
+
+  .cd-hud {
+    top: 62px;
+    left: 12px;
+  }
+
+  .cd-speedo {
+    padding: 8px 14px 5px;
+    min-width: 60px;
+    border-radius: 10px;
+  }
+
+  .cd-speed-val { font-size: 1.65rem; }
+
+  .cd-controls {
+    bottom: max(16px, env(safe-area-inset-bottom));
+    right: max(12px, env(safe-area-inset-right));
+  }
+
+  .cd-dpad {
+    grid-template-columns: repeat(3, 54px);
+    grid-template-rows: repeat(3, 54px);
+    gap: 4px;
+  }
+
+  .dp-btn, .dp-center {
+    min-width: 54px;
+    min-height: 54px;
+    border-radius: 11px;
+  }
+
+  .dp-btn { font-size: 1.1rem; }
+}
+
+@media (max-width: 380px) {
+  .cd-dpad {
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+    gap: 3px;
+  }
+  .dp-btn, .dp-center {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+/* ─── Landscape mobile (short viewport) ─── */
+@media (max-height: 500px) {
+  .cd-header { padding: 6px 16px; }
+  .cd-title  { font-size: 0.95rem; }
+
+  .cd-dpad {
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 3px;
+  }
+  .dp-btn, .dp-center {
+    min-width: 50px;
+    min-height: 50px;
+  }
+
+  .cd-controls {
+    bottom: 8px;
+    right: 10px;
+  }
+}
